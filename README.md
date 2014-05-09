@@ -3,7 +3,7 @@ The photogate Box is an interface box intended to act as an interface between a 
 The Photogate box includes a microcontroller with built-in hardware timers.
 
 ## Source code in C
-The source code for this project is in C and is licensed under the (GNU GPL v3)[http://www.gnu.org/licenses/gpl-3.0.txt].
+The source code for this project is in C and is licensed under the [GNU GPL v3](http://www.gnu.org/licenses/gpl-3.0.txt).
 See the file PhotogateLV.c
 
 ##Prototype project from 2006. 
@@ -11,7 +11,7 @@ See the file PhotogateLV.c
 > Some changes have been made that were not included in the notes at the link given below. Details
 will be added to this README.md file to reflect the photogate timer box as is currently used.
 
-* (Photogate Box Notes from 2006-2007)[http://www.kwantlen.ca/science/physics/faculty/dpeirce/notes/timer_box/]
+* [Photogate Box Notes from 2006-2007](http://www.kwantlen.ca/science/physics/faculty/dpeirce/notes/timer_box/)
 
 ## PIC Wiring
 
