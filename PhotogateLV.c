@@ -32,13 +32,13 @@ flashing for error.
 
 ***********************************************************************************************/
 
-#include <p18F4525.h>
+#include <xc8.h>
 #include <usart.h>    // C-18 Compiler Library for USART functions 
 #include <stdlib.h>   // C-18 Compiler Library for atoi() function
 #include <delays.h>   // C-18 Compiler Library for delay functions 
 #include <timers.h>   // C-18 Compiler Library for timer functions 
 #include <capture.h>  // C-18 Compiler Library for capture functions 
-#include "osc.h"      // local header for oscillator speed setting control function in osc.c
+// #include "osc.h"      // local header for oscillator speed setting control function in osc.c
 
 union two_bytes
 {
@@ -51,11 +51,11 @@ union two_bytes
 };
 
 #pragma config WDT = OFF
-#pragma config OSC = INTIO7      // puts osc/4 on pin 14 to check freq
+#pragma config OSC = EC   // using an external clock (oscillator connected to pin 9 of PIC18F2620)
 #pragma config MCLRE = OFF
 #pragma config LVP = OFF
 #pragma config PBADEN = OFF      // PORTB<4:0> are digital IO 
-#pragma config CCP2MX = PORTBE   // switch CCP2 from RC1 to RB3
+// #pragma config CCP2MX = PORTBE   // switch CCP2 from RC1 to RB3
 
 
 void wait_for_questionmark(void);
@@ -87,7 +87,7 @@ void main (void)
 {
   char gate_mode = 0; 
    
-  set_osc_32MHz();          // to change the internal oscillator frequency
+  // set_osc_32MHz();          // remove because not using external oscillator
   
   Delay10KTCYx(20); 
   
