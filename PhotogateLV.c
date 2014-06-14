@@ -32,7 +32,7 @@ flashing for error.
 
 ***********************************************************************************************/
 
-#include <xc8.h>
+#include <xc.h>
 #include <usart.h>    // C-18 Compiler Library for USART functions 
 #include <stdlib.h>   // C-18 Compiler Library for atoi() function
 #include <delays.h>   // C-18 Compiler Library for delay functions 
@@ -55,7 +55,7 @@ union two_bytes
 #pragma config MCLRE = OFF
 #pragma config LVP = OFF
 #pragma config PBADEN = OFF      // PORTB<4:0> are digital IO 
-// #pragma config CCP2MX = PORTBE   // switch CCP2 from RC1 to RB3
+#pragma config CCP2MX = PORTBE   // switch CCP2 from RC1 to RB3
 
 
 void wait_for_questionmark(void);
@@ -95,12 +95,14 @@ void main (void)
   TRISA = 0b00000000;
   TRISB = 0b00000000;
   TRISC = 0b00000000;
-  TRISD = 0b00000000;
+  // TRISD = 0b00000000;  // the PIC18F2620 does not have a D port.
 
   // Configure 2-Way Status LED
 
-  TRISDbits.TRISD1 = 0;     // set as output 
-  TRISDbits.TRISD2 = 0;     // and as output
+  // TRISDbits.TRISD1 = 0;     // set as output 
+  TRISCbits.TRISC3 = 0;
+  // TRISDbits.TRISD2 = 0;     // and as output
+  TRISCbits.TRISC4 = 0;
  
   // Configure USART module
 
@@ -175,15 +177,15 @@ void wait_for_questionmark(void)
 // Turn 2-Way Status LED to red - ready for data
 void StatusLED_Red_Ready(void)
 {
-PORTDbits.RD2 = 0;
-PORTDbits.RD1 = 1;
+PORTCbits.RC4 = 0;
+PORTCbits.RC3 = 1;
 }
 
 // Turn 2-Way Status LED to green  - working
 void StatusLED_Green_Working(void)
 {
-PORTDbits.RD2 = 1;
-PORTDbits.RD1 = 0;
+PORTCbits.RC4 = 1;
+PORTCbits.RC3 = 0;
 }
 
 void ErrorLED(void)
