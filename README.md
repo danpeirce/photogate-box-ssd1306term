@@ -3,6 +3,7 @@ The photogate Box is an interface box intended to act as an interface between a 
 The Photogate box includes a microcontroller with built-in hardware timers.
 
 This branch is for the PIC18F4525 MCU (used in Surrey photogate boxes).
+
 There is also a [branch for the PIC18F2620 MCU](https://github.com/danpeirce/photogate-box/tree/pic18f2620) (used in Richmond photogate boxes).
 
 ## Source code in C
