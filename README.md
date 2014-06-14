@@ -6,6 +6,8 @@ The Photogate box includes a microcontroller with built-in hardware timers.
 The source code for this project is in C and is licensed under the [GNU GPL v3](http://www.gnu.org/licenses/gpl-3.0.txt).
 See the file PhotogateLV.c
 
+Modified in 2014 for XC8 compiler and to use an external clock
+
 ##Prototype project from 2006. 
 
 > Some changes have been made that were not included in the notes at the link given below. Details

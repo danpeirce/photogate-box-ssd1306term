@@ -1,6 +1,7 @@
 /*********************************************************************************************
 PhotogateLV.c Target PIC18L4525 Controls the PIC MCU as a two photogate timer.
     Copyright (C) 2007   Michael Coombes
+    modifications 2014   Dan Peirce Copyright (C) 2014
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -32,13 +33,13 @@ flashing for error.
 
 ***********************************************************************************************/
 
-#include <p18F4525.h>
+#include <xc.h>
 #include <usart.h>    // C-18 Compiler Library for USART functions 
 #include <stdlib.h>   // C-18 Compiler Library for atoi() function
 #include <delays.h>   // C-18 Compiler Library for delay functions 
 #include <timers.h>   // C-18 Compiler Library for timer functions 
 #include <capture.h>  // C-18 Compiler Library for capture functions 
-#include "osc.h"      // local header for oscillator speed setting control function in osc.c
+
 
 union two_bytes
 {
@@ -51,7 +52,7 @@ union two_bytes
 };
 
 #pragma config WDT = OFF
-#pragma config OSC = INTIO7      // puts osc/4 on pin 14 to check freq
+#pragma config OSC = EC      // external clock
 #pragma config MCLRE = OFF
 #pragma config LVP = OFF
 #pragma config PBADEN = OFF      // PORTB<4:0> are digital IO 
@@ -86,8 +87,6 @@ unsigned char CANCEL;     //override for timing events
 void main (void)
 {
   char gate_mode = 0; 
-   
-  set_osc_32MHz();          // to change the internal oscillator frequency
   
   Delay10KTCYx(20); 
   
