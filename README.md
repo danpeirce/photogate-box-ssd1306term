@@ -15,12 +15,15 @@ will be added to this README.md file to reflect the photogate timer box as is cu
 
 ## PIC Wiring
 
+![image of 2014 prototype](http://www3.telus.net/danpeirce/notes/photogate-box/board_test01.jpg)
+
 The PIC inputs and outputs as defined in the source code
+
 ```c
 // Configure 2-Way Status LED
 
-  TRISDbits.TRISD1 = 0;     // set as output 
-  TRISDbits.TRISD2 = 0;     // and as output
+  TRISCbits.TRISC3 = 0;     // set as output 
+  TRISCbits.TRISC4 = 0;     // and as output
 ```
   
 ```c
