@@ -1,6 +1,7 @@
 /*********************************************************************************************
-PhotogateLV.c Target PIC18L4525 Controls the PIC MCU as a two photogate timer.
+PhotogateLV.c Target PIC18L2620 Controls the PIC MCU as a two photogate timer.
     Copyright (C) 2007   Michael Coombes
+    modified in 2014 by Dan Peirce Copyright (c) 2014
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -16,18 +17,17 @@ PhotogateLV.c Target PIC18L4525 Controls the PIC MCU as a two photogate timer.
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-This program is written for a PIC18F4525 chip with a sparkfun serial-to-USB connector.
+This program is written for a PIC18F2620 chip with a sparkfun serial-to-USB connector.
 
 Two photogate plugs are connected to the CCP1 and CCP2 pins. C-18 librry functions are used to 
 capture and time falling and or rising edges at the pins. Since the built-in timers are 16 
 bit, a counter is used to count timer rollovers and create a 32 bit clock.
 
-Chip is set to 32 MHz and may be tuned using the OSCTUNE SPR. Calibration is done with the 
-digital scope reference of 1 KHz. Timers are set to measure in microseconds. 
+Chip is set to 32 MHz by an external clock. Timers are set to measure in microseconds. 
 
 Maximum time before total rollover is 2^16 * 2^16 * 1 musec = 4294 seconds = 71 minutes.
 
-A two-colour LED between RC1 and RC2 is used as an indicator: Red for ready, green for busy, 
+A two-colour LED between RC3 and RC4 is used as an indicator: Red for ready, green for busy, 
 flashing for error.
 
 ***********************************************************************************************/
@@ -38,7 +38,7 @@ flashing for error.
 #include <delays.h>   // C-18 Compiler Library for delay functions 
 #include <timers.h>   // C-18 Compiler Library for timer functions 
 #include <capture.h>  // C-18 Compiler Library for capture functions 
-// #include "osc.h"      // local header for oscillator speed setting control function in osc.c
+
 
 union two_bytes
 {
@@ -86,8 +86,6 @@ unsigned char CANCEL;     //override for timing events
 void main (void)
 {
   char gate_mode = 0; 
-   
-  // set_osc_32MHz();          // remove because not using external oscillator
   
   Delay10KTCYx(20); 
   
@@ -99,9 +97,7 @@ void main (void)
 
   // Configure 2-Way Status LED
 
-  // TRISDbits.TRISD1 = 0;     // set as output 
   TRISCbits.TRISC3 = 0;
-  // TRISDbits.TRISD2 = 0;     // and as output
   TRISCbits.TRISC4 = 0;
  
   // Configure USART module
