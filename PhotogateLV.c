@@ -23,8 +23,7 @@ Two photogate plugs are connected to the CCP1 and CCP2 pins. C-18 librry functio
 capture and time falling and or rising edges at the pins. Since the built-in timers are 16 
 bit, a counter is used to count timer rollovers and create a 32 bit clock.
 
-Chip is set to 32 MHz and may be tuned using the OSCTUNE SPR. Calibration is done with the 
-digital scope reference of 1 KHz. Timers are set to measure in microseconds. 
+Chip is set to 32 MHz by an external clock. Timers are set to measure in microseconds. 
 
 Maximum time before total rollover is 2^16 * 2^16 * 1 musec = 4294 seconds = 71 minutes.
 
