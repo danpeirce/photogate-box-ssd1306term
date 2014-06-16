@@ -1,5 +1,5 @@
 /*********************************************************************************************
-PhotogateLV.c Target PIC18L4525 Controls the PIC MCU as a two photogate timer.
+PhotogateLV.c Target PIC18L2620 Controls the PIC MCU as a two photogate timer.
     Copyright (C) 2007   Michael Coombes
     modifications 2014   Dan Peirce Copyright (C) 2014
 
@@ -17,7 +17,7 @@ PhotogateLV.c Target PIC18L4525 Controls the PIC MCU as a two photogate timer.
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-This program is written for a PIC18F4525 chip with a sparkfun serial-to-USB connector.
+This program is written for a PIC18F2620 chip with a sparkfun serial-to-USB connector.
 
 Two photogate plugs are connected to the CCP1 and CCP2 pins. C-18 librry functions are used to 
 capture and time falling and or rising edges at the pins. Since the built-in timers are 16 
@@ -27,17 +27,17 @@ Chip is set to 32 MHz by an external clock. Timers are set to measure in microse
 
 Maximum time before total rollover is 2^16 * 2^16 * 1 musec = 4294 seconds = 71 minutes.
 
-A two-colour LED between RC1 and RC2 is used as an indicator: Red for ready, green for busy, 
+A two-colour LED between RC3 and RC4 is used as an indicator: Red for ready, green for busy, 
 flashing for error.
 
 ***********************************************************************************************/
 
 #include <xc.h>
-#include <usart.h>    // C-18 Compiler Library for USART functions 
-#include <stdlib.h>   // C-18 Compiler Library for atoi() function
-#include <delays.h>   // C-18 Compiler Library for delay functions 
-#include <timers.h>   // C-18 Compiler Library for timer functions 
-#include <capture.h>  // C-18 Compiler Library for capture functions 
+#include <usart.h>    // XC8 Compiler Library for USART functions 
+#include <stdlib.h>   // XC8 Compiler Library for atoi() function
+#include <delays.h>   // XC8 Compiler Library for delay functions 
+#include <timers.h>   // XC8 Compiler Library for timer functions 
+#include <capture.h>  // XC8 Compiler Library for capture functions 
 
 
 union two_bytes
@@ -51,7 +51,7 @@ union two_bytes
 };
 
 #pragma config WDT = OFF
-#pragma config OSC = EC      // external clock
+#pragma config OSC = EC   // using an external clock (oscillator connected to pin 9 of PIC18F2620)
 #pragma config MCLRE = OFF
 #pragma config LVP = OFF
 #pragma config PBADEN = OFF      // PORTB<4:0> are digital IO 
@@ -93,12 +93,12 @@ void main (void)
   TRISA = 0b00000000;
   TRISB = 0b00000000;
   TRISC = 0b00000000;
-  TRISD = 0b00000000;
+  // TRISD = 0b00000000;  // the PIC18F2620 does not have a D port.
 
   // Configure 2-Way Status LED
 
-  TRISDbits.TRISD1 = 0;     // set as output 
-  TRISDbits.TRISD2 = 0;     // and as output
+  TRISCbits.TRISC3 = 0;
+  TRISCbits.TRISC4 = 0;
  
   // Configure USART module
 
@@ -112,8 +112,8 @@ void main (void)
           // SPBRG = 16, baud rate is 115 200 (good for hyperterminal debufgging)
 
   // Configure RC2/CCP1 and RB3/CCP2 as inputs
-  // Photogate 1 is on RC2/CCP1/Pin 17 and 
-  // Photogate 2 is on RB3/CCP2/Pin 36 
+  // Photogate 1 is on RC2/CCP1/Pin 13 and 
+  // Photogate 2 is on RB3/CCP2/Pin 24 
   TRISCbits.TRISC2 = 1;     // set RC2(CCP1) as input
   TRISBbits.TRISB3 = 1;     // set RB3(CCP2) as input 
   
@@ -173,15 +173,15 @@ void wait_for_questionmark(void)
 // Turn 2-Way Status LED to red - ready for data
 void StatusLED_Red_Ready(void)
 {
-PORTDbits.RD2 = 0;
-PORTDbits.RD1 = 1;
+PORTCbits.RC4 = 0;
+PORTCbits.RC3 = 1;
 }
 
 // Turn 2-Way Status LED to green  - working
 void StatusLED_Green_Working(void)
 {
-PORTDbits.RD2 = 1;
-PORTDbits.RD1 = 0;
+PORTCbits.RC4 = 1;
+PORTCbits.RC3 = 0;
 }
 
 void ErrorLED(void)
@@ -709,3 +709,4 @@ void ResetUSART(void)
              USART_CONT_RX & USART_BRGH_HIGH, 1 );   
  Delay10KTCYx(10);
 }
+
