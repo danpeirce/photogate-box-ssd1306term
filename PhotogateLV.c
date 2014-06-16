@@ -112,8 +112,8 @@ void main (void)
           // SPBRG = 16, baud rate is 115 200 (good for hyperterminal debufgging)
 
   // Configure RC2/CCP1 and RB3/CCP2 as inputs
-  // Photogate 1 is on RC2/CCP1/Pin 17 and 
-  // Photogate 2 is on RB3/CCP2/Pin 36 
+  // Photogate 1 is on RC2/CCP1/Pin 13 and 
+  // Photogate 2 is on RB3/CCP2/Pin 24 
   TRISCbits.TRISC2 = 1;     // set RC2(CCP1) as input
   TRISBbits.TRISB3 = 1;     // set RB3(CCP2) as input 
   
