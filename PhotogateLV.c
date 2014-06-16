@@ -33,11 +33,11 @@ flashing for error.
 ***********************************************************************************************/
 
 #include <xc.h>
-#include <usart.h>    // C-18 Compiler Library for USART functions 
-#include <stdlib.h>   // C-18 Compiler Library for atoi() function
-#include <delays.h>   // C-18 Compiler Library for delay functions 
-#include <timers.h>   // C-18 Compiler Library for timer functions 
-#include <capture.h>  // C-18 Compiler Library for capture functions 
+#include <usart.h>    // XC8 Compiler Library for USART functions 
+#include <stdlib.h>   // XC8 Compiler Library for atoi() function
+#include <delays.h>   // XC8 Compiler Library for delay functions 
+#include <timers.h>   // XC8 Compiler Library for timer functions 
+#include <capture.h>  // XC8 Compiler Library for capture functions 
 
 
 union two_bytes
