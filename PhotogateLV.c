@@ -17,7 +17,8 @@ PhotogateLV.c Target PIC18L2620 Controls the PIC MCU as a two photogate timer.
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-This program is written for a PIC18F2620 chip with a sparkfun serial-to-USB connector.
+This program is written for a PIC18F2620 chip used with a Solarbotics serial-to-USB TTLyFTDI adapter 
+( see https://solarbotics.com/product/39240/ )
 
 Two photogate plugs are connected to the CCP1 and CCP2 pins. C-18 librry functions are used to 
 capture and time falling and or rising edges at the pins. Since the built-in timers are 16 
