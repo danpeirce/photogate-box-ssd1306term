@@ -4,7 +4,7 @@ The Photogate box includes a microcontroller with built-in hardware timers.
 
 This branch is for the PIC18F4525 MCU (used in Surrey photogate boxes).
 
-There is also a [branch for the PIC18F2620 MCU](https://github.com/danpeirce/photogate-box/tree/pic18f2620) (used in Richmond photogate boxes).
+There is also a [branch for the PIC18F2620 MCU (master branch)](https://github.com/danpeirce/photogate-box) (used in Richmond photogate boxes).
 
 ## Source code in C
 The source code for this project is in C and is licensed under the [GNU GPL v3](http://www.gnu.org/licenses/gpl-3.0.txt).
