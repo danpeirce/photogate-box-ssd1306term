@@ -85,75 +85,81 @@ unsigned char CANCEL;     //override for timing events
 //*********************************************************************************
 void main (void)
 {
-  char gate_mode = 0; 
+    char gate_mode = 0; 
   
-  Delay10KTCYx(20); 
+    Delay10KTCYx(20); 
   
-  // To avoid stray input noise turn all DIO pins to outputs 
-  TRISA = 0b00000000;
-  TRISB = 0b00000000;
-  TRISC = 0b00000000;
-  TRISD = 0b00000000;
+    // To avoid stray input noise turn all DIO pins to outputs 
+    TRISA = 0b00000000;
+    TRISB = 0b00000000;
+    TRISC = 0b00000000;
+    TRISD = 0b00000000;
 
-  // Configure 2-Way Status LED
+    // Configure 2-Way Status LED
 
-  TRISDbits.TRISD1 = 0;     // set as output 
-  TRISDbits.TRISD2 = 0;     // and as output
+    TRISDbits.TRISD1 = 0;     // set as output 
+    TRISDbits.TRISD2 = 0;     // and as output
  
-  // Configure USART module
+    // Configure USART module
 
-  TRISCbits.TRISC6 = 0;     // set TX (RC6) as output 
-  TRISCbits.TRISC7 = 1;     // and RX (RC7) as input
+    TRISCbits.TRISC6 = 0;     // set TX (RC6) as output 
+    TRISCbits.TRISC7 = 1;     // and RX (RC7) as input
 
-  OpenUSART( USART_TX_INT_OFF & USART_RX_INT_OFF & USART_ASYNCH_MODE & USART_EIGHT_BIT & 
+    OpenUSART( USART_TX_INT_OFF & USART_RX_INT_OFF & USART_ASYNCH_MODE & USART_EIGHT_BIT & 
              USART_CONT_RX & USART_BRGH_HIGH, 1 );   
           // baud rate is 2 000 000 / (SPBRG+1)
           // SPBRG = 1, baud rate is 1 000 000, 
           // SPBRG = 16, baud rate is 115 200 (good for hyperterminal debufgging)
 
-  // Configure RC2/CCP1 and RB3/CCP2 as inputs
-  // Photogate 1 is on RC2/CCP1/Pin 17 and 
-  // Photogate 2 is on RB3/CCP2/Pin 36 
-  TRISCbits.TRISC2 = 1;     // set RC2(CCP1) as input
-  TRISBbits.TRISB3 = 1;     // set RB3(CCP2) as input 
+    // Configure RC2/CCP1 and RB3/CCP2 as inputs
+    // Photogate 1 is on RC2/CCP1/Pin 13 and 
+    // Photogate 2 is on RB3/CCP2/Pin 24 
+    TRISCbits.TRISC2 = 1;     // set RC2(CCP1) as input
+    TRISBbits.TRISB3 = 1;     // set RB3(CCP2) as input
   
-  Delay10KTCYx(10);
+    Delay10KTCYx(10);
  
 
-while(1==1)
-   {
+    while(1==1)
+    {
 
-      CANCEL = 0;  // reset
-      counter = 0; // reset
-	  StatusLED_Red_Ready();
-      // get operational parameters	
-      wait_for_questionmark();
-      while (!DataRdyUSART());  // wait until there is a byte to read
-      gate_mode = ReadUSART();  // read one byte 
+        CANCEL = 0;  // reset
+        counter = 0; // reset
+        StatusLED_Red_Ready();
+        // get operational parameters    
+         wait_for_questionmark();
+        while (!DataRdyUSART());  // wait until there is a byte to read
+        gate_mode = ReadUSART();  // read one byte 
  
- 	  if ( gate_mode < 48 || gate_mode >  53) gate_mode = '6'; // repeat
+        if ( gate_mode < 48 || gate_mode >  53) gate_mode = '6'; // repeat
   
   
-	  switch(gate_mode)
-         {
-	         case '0':	PhotogateStatusCheck();
-						break;
-	         case '1': 	Time_FallingEdges_1Gate();
-						break;
-	         case '2': 	Time_FallingEdges_2Gates();
-						break;
-	         case '3': 	Time_AllEdges_1Gate();
-						break;
-	         case '4': 	Time_AllEdges_2Gates();
-						break;
-	         case '5': 	ResetUSART();
-                        StatusLED_Green_Working();
-                        Delay10KTCYx(255);   
-						break;
-			 default:
-						ErrorLED();
-						break;	 
-		 }
+        switch(gate_mode)
+        {
+            case '0':    
+			    PhotogateStatusCheck();
+                break;
+            case '1':     
+			    Time_FallingEdges_1Gate();
+                break;
+            case '2':
+                Time_FallingEdges_2Gates();
+                break;
+            case '3':
+                Time_AllEdges_1Gate();
+                break;
+            case '4':     
+			    Time_AllEdges_2Gates();
+                break;
+            case '5':     
+			    ResetUSART();
+                StatusLED_Green_Working();
+                Delay10KTCYx(255);   
+                break;
+            default:
+                ErrorLED();
+                break;     
+        }
     } 
 }
 
@@ -162,11 +168,11 @@ while(1==1)
 // Polls serial port until '?' is received
 void wait_for_questionmark(void)
 {
- unsigned char repeat = ' ';
- while (repeat != '?')
- 	{
-		 while (!DataRdyUSART());  // wait until there is a byte to read
-		 repeat = ReadUSART();     // read one byte
+     unsigned char repeat = ' ';
+     while (repeat != '?')
+     {
+         while (!DataRdyUSART());  // wait until there is a byte to read
+         repeat = ReadUSART();     // read one byte
      }
 }
 
@@ -191,9 +197,9 @@ void ErrorLED(void)
     for( i=0; i<10; i++ )
     {
         StatusLED_Green_Working();
-	    Delay10KTCYx(100); //0.10 second delay
+        Delay10KTCYx(100); //0.10 second delay
         StatusLED_Red_Ready();
-	    Delay10KTCYx(100); //0.10 second delay
+        Delay10KTCYx(100); //0.10 second delay
     }
    
 }
@@ -203,18 +209,18 @@ void ErrorLED(void)
 unsigned int C1_Increment_Counter_on_Timer1_Rollover(void)
 {
     while(!PIR1bits.CCP1IF && !CANCEL) // wait for event;
-	{
+    {
         if (DataRdyUSART())
         {
             if ( getcUSART() == (char)'!') CANCEL = (unsigned int)1;
         }
-	    // use overflow to go to a 32 bit counter
-	    if (PIR1bits.TMR1IF) // Timer1 clock has overflowed
-	    {
-	        PIR1bits.TMR1IF = 0; // reset Timer1 clock interrupt
-	        counter++;
-	    }
-	}
+        // use overflow to go to a 32 bit counter
+        if (PIR1bits.TMR1IF) // Timer1 clock has overflowed
+        {
+            PIR1bits.TMR1IF = 0; // reset Timer1 clock interrupt
+            counter++;
+        }
+    }
     PIR1bits.CCP1IF = 0; //clear flag for next event
     return counter;
 }
@@ -225,18 +231,18 @@ unsigned int C1_Increment_Counter_on_Timer1_Rollover(void)
 unsigned int C2_Increment_Counter_on_Timer3_Rollover(void)
 {
     while(!PIR2bits.CCP2IF && !CANCEL) // wait for event;
-	{
+    {
         if (DataRdyUSART())
         {
             if ( getcUSART() == (char)'!') CANCEL = (unsigned int)1;  
         }
-	    // use overflow to go to a 32 bit counter
-	    if (PIR2bits.TMR3IF) // Timer3 clock has overflowed 
-  	    {
-	        PIR2bits.TMR3IF = 0; // reset Timer3 clock interrupt
-	        counter++;
-	    }
-	}
+        // use overflow to go to a 32 bit counter
+        if (PIR2bits.TMR3IF) // Timer3 clock has overflowed 
+        {
+            PIR2bits.TMR3IF = 0; // reset Timer3 clock interrupt
+            counter++;
+        }
+    }
     PIR2bits.CCP2IF = 0; //clear flag for next event
     return counter;
 }
@@ -246,21 +252,21 @@ unsigned int C2_Increment_Counter_on_Timer3_Rollover(void)
 unsigned int C12_Increment_Counter_on_Timer_Rollover(void)
 {
     while(!PIR1bits.CCP1IF && !PIR2bits.CCP2IF  && !CANCEL) // wait for event;
-	{
+    {
         if (DataRdyUSART())
         {
             if ( getcUSART() == (char)'!') CANCEL = (unsigned char)1;
-		}
-	    // use overflow to go to a 32 bit counter
-	    if (PIR1bits.TMR1IF || PIR2bits.TMR3IF) // Timer clock has overflowed
-	    {
-	        PIR1bits.TMR1IF = 0; // reset Timer1 clock interrupt
-	        PIR2bits.TMR3IF = 0; // reset Timer3 clock interrupt
+        }
+        // use overflow to go to a 32 bit counter
+        if (PIR1bits.TMR1IF || PIR2bits.TMR3IF) // Timer clock has overflowed
+        {
+            PIR1bits.TMR1IF = 0; // reset Timer1 clock interrupt
+            PIR2bits.TMR3IF = 0; // reset Timer3 clock interrupt
             counter++;
-		}
+        }
     }
 
-    return counter;	
+    return counter;    
 }
 
 //  Photogate 1 is read on RC1 and Photogate 2 is read by RB3 (was RC2)
@@ -270,8 +276,8 @@ void PhotogateStatusCheck(void)
     unsigned char gate_status;
     StatusLED_Green_Working(); // set LED
     gate_status = (PORTCbits.RC2 + (PORTBbits.RB3 << 1));  // read photogate pins     
-    gate_status = 3 - gate_status + 48;					   // convert to an ascii digit
-														   // '0' both off
+    gate_status = 3 - gate_status + 48;                       // convert to an ascii digit
+                                                           // '0' both off
                                                            // '1' gate 1 on, gate 2 off
                                                            // '2' gate 1 off, gate 2 on
                                                            // '3' gate 1 on, gate 2 on
@@ -299,30 +305,30 @@ void Time_FallingEdges_1Gate(void)
 
     if (gate_to_use != '2') // use photogate 1 (default)
     {
-   	    // configure Timer1 for capture mode at 8*TOSC = 1 microsec.
+        // configure Timer1 for capture mode at 8*TOSC = 1 microsec.
         OpenTimer1(TIMER_INT_OFF & T1_16BIT_RW & T1_SOURCE_INT & T1_PS_1_8 & T1_CCP1_T3_CCP2);
         WriteTimer1(0);
         PIR1bits.TMR1IF = 0;
         OpenCapture1(C1_EVERY_FALL_EDGE & CAPTURE_INT_OFF);
         while(i<number_edges_to_time)
         {
-   	        rollover_n = C1_Increment_Counter_on_Timer1_Rollover(); 
+            rollover_n = C1_Increment_Counter_on_Timer1_Rollover(); 
             current_edge_time = ReadCapture1();  
             if (!CANCEL)
             { 
-			    integer_bytes_to_USART(rollover_n, current_edge_time); // takes about 60 musec at 1 Mbaud
+                integer_bytes_to_USART(rollover_n, current_edge_time); // takes about 60 musec at 1 Mbaud
             }
-		    else
+            else
             {
                 integer_bytes_to_USART(0, 0); // takes about 60 musec at 1 Mbaud
             }
-		    i++;
+            i++;
         }
         CloseCapture1();
     }
     else
     {
-	    // configure Timer3 for capture mode at 8*TOSC = 1 microsec.
+        // configure Timer3 for capture mode at 8*TOSC = 1 microsec.
         OpenTimer3(TIMER_INT_OFF & T3_16BIT_RW & T3_SOURCE_INT & T3_PS_1_8 & T1_CCP1_T3_CCP2);
         WriteTimer3(0);
         PIR2bits.TMR3IF = 0;
@@ -331,17 +337,17 @@ void Time_FallingEdges_1Gate(void)
         {
             rollover_n = C2_Increment_Counter_on_Timer3_Rollover();
             current_edge_time = ReadCapture2();  
-		    if (!CANCEL)
+            if (!CANCEL)
             {     
-		        integer_bytes_to_USART(rollover_n, current_edge_time); // takes about 60 musec at 1 Mbaud
+                integer_bytes_to_USART(rollover_n, current_edge_time); // takes about 60 musec at 1 Mbaud
             }
-		    else
+            else
             {
                 integer_bytes_to_USART(0, 0); // takes about 60 musec at 1 Mbaud
             }   
-	        i++;
+            i++;
         }
- 	    CloseCapture2();
+        CloseCapture2();
     }
      
     if (gate_to_use != '2') // use photogate 1 (default)
@@ -364,9 +370,9 @@ void Time_FallingEdges_2Gates(void)
     unsigned int number_edge_pairs_per_gate = 0, edge_time = 0, rollover_n = 0;
     unsigned int i, Gate1_counter = 0, Gate2_counter = 0, Gate_counter_end = 0;
 
-    while (!DataRdyUSART());    			     // wait until there is a byte to read
-    getsUSART(string,3);                		 // read a three characters from buffer
-    number_edge_pairs_per_gate = atoi(string);	 // function quits at first non-appropriate symbol
+    while (!DataRdyUSART());                     // wait until there is a byte to read
+    getsUSART(string,3);                         // read a three characters from buffer
+    number_edge_pairs_per_gate = atoi(string);     // function quits at first non-appropriate symbol
 
     Gate_counter_end = 2 * number_edge_pairs_per_gate;
 
@@ -383,10 +389,10 @@ void Time_FallingEdges_2Gates(void)
     OpenCapture1(C1_EVERY_FALL_EDGE & CAPTURE_INT_OFF);
     OpenCapture2(C2_EVERY_FALL_EDGE & CAPTURE_INT_OFF);
 
-    WriteTimer1(0); 			// Reset and synchronize timers
+    WriteTimer1(0);             // Reset and synchronize timers
     WriteTimer3(5);            // 5 because of time already passed from previous line 
-    PIR1bits.TMR1IF = 0;		// Reset Timer1 interrupt flag
-    PIR2bits.TMR3IF = 0;		// Reset Timer3 interrupt flag
+    PIR1bits.TMR1IF = 0;        // Reset Timer1 interrupt flag
+    PIR2bits.TMR3IF = 0;        // Reset Timer3 interrupt flag
 
     i = 0;
     while( i<Gate_counter_end)
@@ -394,51 +400,49 @@ void Time_FallingEdges_2Gates(void)
         rollover_n = C12_Increment_Counter_on_Timer_Rollover();
 
         if (!CANCEL)
-	    { 
- 	        // event happened so determine which gate CCP1 or CCP2
-	        if (PIR1bits.CCP1IF ) // event occurred on CCP1 - Gate 1
+        { 
+             // event happened so determine which gate CCP1 or CCP2
+            if (PIR1bits.CCP1IF ) // event occurred on CCP1 - Gate 1
             {  
-	            edge_time = ReadCapture1();
-	            PIR1bits.CCP1IF = 0; //clear flag for next event
-	            Gate1_counter++;
-	            if ( Gate1_counter == number_edge_pairs_per_gate ) 
-                    CloseCapture1();                                   //all CCP1 edges found
-	            gate_identifier = 'X'; // 'X' for gate 1 
-	            i++;    
-		 	    while(BusyUSART());
-			    WriteUSART(gate_identifier);
-	 		    integer_bytes_to_USART(rollover_n, edge_time); // takes about 60 musec at 1 Mbaud
-	        }
-		      
+                edge_time = ReadCapture1();
+                PIR1bits.CCP1IF = 0; //clear flag for next event
+                Gate1_counter++;
+                if ( Gate1_counter == number_edge_pairs_per_gate ) CloseCapture1();  //all CCP1 edges found
+                gate_identifier = 'X'; // 'X' for gate 1 
+                i++;    
+                while(BusyUSART());
+                WriteUSART(gate_identifier);
+                integer_bytes_to_USART(rollover_n, edge_time); // takes about 60 musec at 1 Mbaud
+            }
+              
             if (PIR2bits.CCP2IF ) // event occurred on CCP2 - Gate 2
-	        {
-	            edge_time = ReadCapture2();
-	            PIR2bits.CCP2IF = 0; //clear flag for next event
-	 	        Gate2_counter++;
-	 	        if ( Gate2_counter == number_edge_pairs_per_gate) 
-                    CloseCapture2();                                     // all CCP2 edges found  
-	            gate_identifier = 'Y'; // 'Y' for gate 2 
-	            i++; 
-		 	    while(BusyUSART());
-			    WriteUSART(gate_identifier);
-	            integer_bytes_to_USART(rollover_n, edge_time); // takes about 60 musec at 1 Mbaud
-	        }
+            {
+                edge_time = ReadCapture2();
+                PIR2bits.CCP2IF = 0; //clear flag for next event
+                Gate2_counter++;
+                if ( Gate2_counter == number_edge_pairs_per_gate) CloseCapture2(); // all CCP2 edges found  
+                gate_identifier = 'Y'; // 'Y' for gate 2 
+                i++; 
+                while(BusyUSART());
+                WriteUSART(gate_identifier);
+                integer_bytes_to_USART(rollover_n, edge_time); // takes about 60 musec at 1 Mbaud
+            }
         }
         else
-        { 		 	           
+        {                         
             Gate1_counter++;
             gate_identifier = 'X'; // 'X' for gate 1 
             i++;    
-	 	    while(BusyUSART());
-		    WriteUSART(gate_identifier);
-		    integer_bytes_to_USART(0, 0); // takes about 60 musec at 1 Mbaud
-		    Gate2_counter++;
-		    gate_identifier = 'Y'; // 'Y' for gate 2 
-            i++; 
-	 	    while(BusyUSART());
-		    WriteUSART(gate_identifier);
+            while(BusyUSART());
+            WriteUSART(gate_identifier);
             integer_bytes_to_USART(0, 0); // takes about 60 musec at 1 Mbaud
-		}
+            Gate2_counter++;
+            gate_identifier = 'Y'; // 'Y' for gate 2 
+            i++; 
+            while(BusyUSART());
+            WriteUSART(gate_identifier);
+            integer_bytes_to_USART(0, 0); // takes about 60 musec at 1 Mbaud
+        }
      
     }//end while  
      
@@ -485,27 +489,27 @@ void Time_AllEdges_1Gate(void)
         {
             // time falling edge   
             OpenCapture1(C1_EVERY_FALL_EDGE & CAPTURE_INT_ON);
-    	    rollover_n_Fall = C1_Increment_Counter_on_Timer1_Rollover();
+            rollover_n_Fall = C1_Increment_Counter_on_Timer1_Rollover();
             fall_time = ReadCapture1();  
 
-		    if (!CANCEL)
+            if (!CANCEL)
             {     
-    		    integer_bytes_to_USART(rollover_n_Fall, fall_time); // takes 60 musec to complete
+                integer_bytes_to_USART(rollover_n_Fall, fall_time); // takes 60 musec to complete
             }
-		    else
+            else
             {
                 integer_bytes_to_USART(0, 0); // takes about 60 musec at 1 Mbaud
             }     
             // time rising edge 
             OpenCapture1(C1_EVERY_RISE_EDGE & CAPTURE_INT_ON);
-   	        rollover_n_Rise = C1_Increment_Counter_on_Timer1_Rollover();
+            rollover_n_Rise = C1_Increment_Counter_on_Timer1_Rollover();
             rise_time = ReadCapture1();
 
-		    if (!CANCEL)
+            if (!CANCEL)
             {     
-    		    integer_bytes_to_USART(rollover_n_Rise, rise_time); // takes 60 musec to complete
+                integer_bytes_to_USART(rollover_n_Rise, rise_time); // takes 60 musec to complete
             }
-		    else
+            else
             {
                 integer_bytes_to_USART(0, 0); // takes about 60 musec at 1 Mbaud
             }     
@@ -521,44 +525,44 @@ void Time_AllEdges_1Gate(void)
         {
             // time falling edge   
             OpenCapture2(C2_EVERY_FALL_EDGE & CAPTURE_INT_OFF);
-    	    rollover_n_Fall = C2_Increment_Counter_on_Timer3_Rollover();
-		    fall_time = ReadCapture2();  
-		    if (!CANCEL)
+            rollover_n_Fall = C2_Increment_Counter_on_Timer3_Rollover();
+            fall_time = ReadCapture2();  
+            if (!CANCEL)
             {     
-      		    integer_bytes_to_USART(rollover_n_Fall, fall_time); // takes 60 musec to complete
-    		}
-		    else
+                  integer_bytes_to_USART(rollover_n_Fall, fall_time); // takes 60 musec to complete
+            }
+            else
             {
                 integer_bytes_to_USART(0, 0); // takes about 60 musec at 1 Mbaud
             }     
            
-		    // time rising edge   
-  		    OpenCapture2(C2_EVERY_RISE_EDGE & CAPTURE_INT_OFF);
-		    rollover_n_Rise = C2_Increment_Counter_on_Timer3_Rollover();
+            // time rising edge   
+            OpenCapture2(C2_EVERY_RISE_EDGE & CAPTURE_INT_OFF);
+            rollover_n_Rise = C2_Increment_Counter_on_Timer3_Rollover();
             rise_time = ReadCapture2();  
 
-		    if (!CANCEL)
+            if (!CANCEL)
             {     
-      		    integer_bytes_to_USART(rollover_n_Rise, rise_time); // takes 60 musec to complete
+                integer_bytes_to_USART(rollover_n_Rise, rise_time); // takes 60 musec to complete
             }
-		    else
+            else
             {
                 integer_bytes_to_USART(0, 0); // takes about 60 musec at 1 Mbaud
             }     
         }
         CloseCapture2();
-   	    }
+    }
  
-        if (gate_to_use != '2') //use photogate 1 (default)
-        { 
-            CloseTimer1();
-        } 
-        else
-        {  
-            CloseTimer3();
-        }
+    if (gate_to_use != '2') //use photogate 1 (default)
+    { 
+        CloseTimer1();
+    } 
+    else
+    {  
+        CloseTimer3();
+    }
   
-        ResetUSART();
+    ResetUSART();
 
 }     
 
@@ -571,8 +575,8 @@ void Time_AllEdges_2Gates(void)
     unsigned int i, Gate1_counter = 0, Gate2_counter = 0, Gate_counter_end = 0;
 
     while (!DataRdyUSART());                               // wait until there is a byte to read
-    getsUSART(string,3);             		 // read a three characters from buffer
-    number_edge_pairs_per_gate = atoi(string);	 // function quits at first non-appropriate symbol
+    getsUSART(string,3);                      // read a three characters from buffer
+    number_edge_pairs_per_gate = atoi(string);     // function quits at first non-appropriate symbol
  
     Gate_counter_end = 2 * number_edge_pairs_per_gate;
 
@@ -598,75 +602,73 @@ void Time_AllEdges_2Gates(void)
         rollover_n = C12_Increment_Counter_on_Timer_Rollover();
 
         if (!CANCEL)
-	    { 
-	        // event happened so determine which gate CCP1 or CCP2
-	        if (PIR1bits.CCP1IF ) // event occurred on CCP1 - Gate 1
-	        {  
-	            edge_time = ReadCapture1();
-	   			
-	            PIR1bits.CCP1IF = 0; //clear flag for next event
-	            
-			    if ( (Gate1_counter % 2) == (unsigned int)0 ) // even number next edge is a rise 
-	            {
+        { 
+            // event happened so determine which gate CCP1 or CCP2
+            if (PIR1bits.CCP1IF ) // event occurred on CCP1 - Gate 1
+            {  
+                edge_time = ReadCapture1();
+                   
+                PIR1bits.CCP1IF = 0; //clear flag for next event
+                
+                if ( (Gate1_counter % 2) == (unsigned int)0 ) // even number next edge is a rise 
+                {
                     // set up for the next, rising, edge   
                     OpenCapture1(C1_EVERY_RISE_EDGE & CAPTURE_INT_OFF);
-	            }
-	            else // odd - next edge is a fall
+                }
+                else // odd - next edge is a fall
                 {
                     // set up for next, falling, edge  
                     OpenCapture1(C1_EVERY_FALL_EDGE & CAPTURE_INT_OFF);
                 }
-	
-		        Gate1_counter++;
-		        i++; 
-	            if ( Gate1_counter == Gate_counter_end ) 
-                    CloseCapture1();                          //all CCP1 edges found
-	            gate_identifier = 'X'; // 'X' for gate 1 
-	            while(BusyUSART());
-	            WriteUSART(gate_identifier);
-	            integer_bytes_to_USART(rollover_n, edge_time); // takes 60 musec to complete!
-	        }
-	            
-	        if (PIR2bits.CCP2IF ) // event occurred on CCP2 - Gate 2
-	        {
-	            edge_time = ReadCapture2();
-	
-	            PIR2bits.CCP2IF = 0; //clear flag for next event
-	            
-	   	        if ((Gate2_counter % 2) == (unsigned int)0 ) // even number next edge is a rise  
-	     	    {
-	                // set up for the next, rising, edge   
-	                OpenCapture2(C2_EVERY_RISE_EDGE & CAPTURE_INT_OFF);
-	            }
-	            else // odd - next edge is a fall
-	            {
-	                // set up for next, falling, edge  
-	                OpenCapture2(C2_EVERY_FALL_EDGE & CAPTURE_INT_OFF);
-	            }
-	
-	 	        Gate2_counter++;
-	 	        i++;
-	            if ( Gate2_counter == Gate_counter_end) 
-	                CloseCapture2(); 								// all CCP2 edges found  
-	            gate_identifier = 'Y'; // 'Y' for gate 2 
+    
+                Gate1_counter++;
+                i++; 
+                if ( Gate1_counter == Gate_counter_end )  CloseCapture1();    //all CCP1 edges found
+                gate_identifier = 'X'; // 'X' for gate 1 
                 while(BusyUSART());
-	            WriteUSART(gate_identifier);
-	            integer_bytes_to_USART(rollover_n, edge_time); // takes 60 musec to complete
-	        }  
-		}
-		else
-        { 		 	           
+                WriteUSART(gate_identifier);
+                integer_bytes_to_USART(rollover_n, edge_time); // takes 60 musec to complete!
+            }
+                
+            if (PIR2bits.CCP2IF ) // event occurred on CCP2 - Gate 2
+            {
+                edge_time = ReadCapture2();
+    
+                PIR2bits.CCP2IF = 0; //clear flag for next event
+                
+                if ((Gate2_counter % 2) == (unsigned int)0 ) // even number next edge is a rise  
+                {
+                    // set up for the next, rising, edge   
+                    OpenCapture2(C2_EVERY_RISE_EDGE & CAPTURE_INT_OFF);
+                }
+                else // odd - next edge is a fall
+                {
+                    // set up for next, falling, edge  
+                    OpenCapture2(C2_EVERY_FALL_EDGE & CAPTURE_INT_OFF);
+                }
+    
+                Gate2_counter++;
+                i++;
+                if ( Gate2_counter == Gate_counter_end)  CloseCapture2();      // all CCP2 edges found  
+                gate_identifier = 'Y'; // 'Y' for gate 2 
+                while(BusyUSART());
+                WriteUSART(gate_identifier);
+                integer_bytes_to_USART(rollover_n, edge_time); // takes 60 musec to complete
+            }  
+        }
+        else
+        {                         
             Gate1_counter++;
             gate_identifier = 'X'; // 'X' for gate 1 
             i++;    
-	 	    while(BusyUSART());
-		    WriteUSART(gate_identifier);
-		    integer_bytes_to_USART(0, 0); // takes about 60 musec at 1 Mbaud
-		    Gate2_counter++;
-		    gate_identifier = 'Y'; // 'Y' for gate 2 
+            while(BusyUSART());
+            WriteUSART(gate_identifier);
+            integer_bytes_to_USART(0, 0); // takes about 60 musec at 1 Mbaud
+            Gate2_counter++;
+            gate_identifier = 'Y'; // 'Y' for gate 2 
             i++; 
-	 	    while(BusyUSART());
-		    WriteUSART(gate_identifier);
+            while(BusyUSART());
+            WriteUSART(gate_identifier);
             integer_bytes_to_USART(0, 0); // takes about 60 musec at 1 Mbaud
         }
 
