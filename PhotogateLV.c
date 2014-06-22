@@ -127,7 +127,7 @@ void main (void)
         counter = 0; // reset
         StatusLED_Red_Ready();
         // get operational parameters    
-         wait_for_questionmark();
+        wait_for_questionmark();
         while (!DataRdyUSART());  // wait until there is a byte to read
         gate_mode = ReadUSART();  // read one byte 
  
@@ -137,10 +137,10 @@ void main (void)
         switch(gate_mode)
         {
             case '0':    
-			    PhotogateStatusCheck();
+                PhotogateStatusCheck();
                 break;
             case '1':     
-			    Time_FallingEdges_1Gate();
+                Time_FallingEdges_1Gate();
                 break;
             case '2':
                 Time_FallingEdges_2Gates();
@@ -149,10 +149,10 @@ void main (void)
                 Time_AllEdges_1Gate();
                 break;
             case '4':     
-			    Time_AllEdges_2Gates();
+                Time_AllEdges_2Gates();
                 break;
             case '5':     
-			    ResetUSART();
+                ResetUSART();
                 StatusLED_Green_Working();
                 Delay10KTCYx(255);   
                 break;
