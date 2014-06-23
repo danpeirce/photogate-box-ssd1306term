@@ -19,7 +19,7 @@ PhotogateLV.c Target PIC18L4525 Controls the PIC MCU as a two photogate timer.
 
 This program is written for a PIC18F4525 chip with a sparkfun serial-to-USB connector.
 
-Two photogate plugs are connected to the CCP1 and CCP2 pins. C-18 librry functions are used to 
+Two photogate plugs are connected to the CCP1 and CCP2 pins. C-18 library functions are used to 
 capture and time falling and or rising edges at the pins. Since the built-in timers are 16 
 bit, a counter is used to count timer rollovers and create a 32 bit clock.
 
@@ -258,10 +258,10 @@ unsigned int C12_Increment_Counter_on_Timer_Rollover(void)
             if ( getcUSART() == (char)'!') CANCEL = (unsigned char)1;
         }
         // use overflow to go to a 32 bit counter
-        if (PIR1bits.TMR1IF || PIR2bits.TMR3IF) // Timer clock has overflowed
+        if (PIR1bits.TMR1IF ) // Timer clock has overflowed
         {
             PIR1bits.TMR1IF = 0; // reset Timer1 clock interrupt
-            PIR2bits.TMR3IF = 0; // reset Timer3 clock interrupt
+            // PIR2bits.TMR3IF = 0; // reset Timer3 clock interrupt
             counter++;
         }
     }
@@ -362,7 +362,7 @@ void Time_FallingEdges_1Gate(void)
     ResetUSART();
 }     
 
-// Times falling edges on both CCP1 using Timer1 and CCP2 using Timer 3
+// Times falling edges on both CCP1 and CCP2  using Timer1 
 void Time_FallingEdges_2Gates(void)
 {
     char string[4];                                        // string to get numbers
@@ -378,10 +378,8 @@ void Time_FallingEdges_2Gates(void)
 
     StatusLED_Green_Working();
 
-    // two independent timers
-    // configure Timers for capture mode at 8*TOSC = 1 microsec.
-    OpenTimer1(TIMER_INT_OFF & T1_16BIT_RW & T1_SOURCE_INT & T1_PS_1_8 & T1_CCP1_T3_CCP2);
-    OpenTimer3(TIMER_INT_OFF & T3_16BIT_RW & T3_SOURCE_INT & T3_PS_1_8 & T1_CCP1_T3_CCP2);
+    // configure Timer for capture mode at 8*TOSC = 1 microsec.
+    OpenTimer1(TIMER_INT_OFF & T1_16BIT_RW & T1_SOURCE_INT & T1_PS_1_8 & T1_SOURCE_CCP);
     PIE1bits.TMR1IE = 1;
 
     counter = 0;
@@ -389,10 +387,8 @@ void Time_FallingEdges_2Gates(void)
     OpenCapture1(C1_EVERY_FALL_EDGE & CAPTURE_INT_OFF);
     OpenCapture2(C2_EVERY_FALL_EDGE & CAPTURE_INT_OFF);
 
-    WriteTimer1(0);             // Reset and synchronize timers
-    WriteTimer3(5);            // 5 because of time already passed from previous line 
+    WriteTimer1(0);             // Reset 
     PIR1bits.TMR1IF = 0;        // Reset Timer1 interrupt flag
-    PIR2bits.TMR3IF = 0;        // Reset Timer3 interrupt flag
 
     i = 0;
     while( i<Gate_counter_end)
@@ -451,7 +447,6 @@ void Time_FallingEdges_2Gates(void)
     CloseCapture2();
 
     CloseTimer1();
-    CloseTimer3();
 
     ResetUSART();
  
@@ -566,7 +561,7 @@ void Time_AllEdges_1Gate(void)
 
 }     
 
-// Times falling and rising edges on both CCP1 using Timer1 and CCP2 using Timer 3
+// Times falling and rising edges on both CCP1 and CCP2 using Timer1  
 void Time_AllEdges_2Gates(void)
 {
     char string[4];                                        // string to get numbers
@@ -583,18 +578,15 @@ void Time_AllEdges_2Gates(void)
     StatusLED_Green_Working();
 
     // configure Timers for capture mode at 8*TOSC = 1 microsec.
-    OpenTimer1(TIMER_INT_OFF & T1_16BIT_RW & T1_SOURCE_INT & T1_PS_1_8 & T1_CCP1_T3_CCP2);
-    OpenTimer3(TIMER_INT_OFF & T3_16BIT_RW & T3_SOURCE_INT & T3_PS_1_8 & T1_CCP1_T3_CCP2);
+    OpenTimer1(TIMER_INT_OFF & T1_16BIT_RW & T1_SOURCE_INT & T1_PS_1_8 & T1_SOURCE_CCP);
     PIE1bits.TMR1IE = 1;
     counter = 0;
                
     OpenCapture1(C1_EVERY_FALL_EDGE & CAPTURE_INT_OFF);
     OpenCapture2(C2_EVERY_FALL_EDGE & CAPTURE_INT_OFF);
 
-    WriteTimer1(0);             // Reset and synchronize timers
-    WriteTimer3(5);             // 5 because of time already passed from previous line 
+    WriteTimer1(0);             // Reset 
     PIR1bits.TMR1IF = 0;        // Reset Timer1 interrupt flag
-    PIR2bits.TMR3IF = 0;        // Reset Timer3 interrupt flag
 
     i = 0;
     while( i<(4*number_edge_pairs_per_gate) )
@@ -674,8 +666,7 @@ void Time_AllEdges_2Gates(void)
 
     }
      
-    CloseTimer1();
-    CloseTimer3();        
+    CloseTimer1();        
     ResetUSART();
 }
 
