@@ -16,7 +16,10 @@ Modified in 2014 for XC8 compiler and to use an external clock
 
 ## Communication between Timer Box and Host
 
-* See[Time_AllEdges_1Gate.md](doc/Time_AllEdges_1Gate.md)
+In general the timer box firmware sits in the main while loop wating for a command from the host. A command always starts with a question mark followed by a single numeric character. The rest of the command is command dependent. Onces times have been aquired by the timer box they are sent to the host as four byte binary values.
+
+* See [Time_AllEdges_1Gate.md](doc/Time_AllEdges_1Gate.md)
+* more to come...
 
 ##Prototype project from 2006. 
 
