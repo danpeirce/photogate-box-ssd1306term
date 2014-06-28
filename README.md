@@ -14,6 +14,10 @@ See the file PhotogateLV.c
 
 Modified in 2014 for XC8 compiler and to use an external clock
 
+## Communication between Timer Box and Host
+
+* See[Time_AllEdges_1Gate.md](doc/Time_AllEdges_1Gate.md)
+
 ##Prototype project from 2006. 
 
 > Some changes have been made that were not included in the notes at the link given below. Details
