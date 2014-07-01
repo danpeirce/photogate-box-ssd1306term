@@ -1,5 +1,6 @@
 # For a host computer to communicate with the KPU photogate timer box
 # file photogate-timer.py
+#                              **This file is a work in progress**
 
 # Except as noted (getAvailablePorts())
 #     copyright 2014 Dan Peirce B.Sc.
