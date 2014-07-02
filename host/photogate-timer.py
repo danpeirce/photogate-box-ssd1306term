@@ -1,6 +1,5 @@
 # For a host computer to communicate with the KPU photogate timer box
 # file photogate-timer.py
-#                              **This file is a work in progress**
 
 # Except as noted (getAvailablePorts())
 #     copyright 2014 Dan Peirce B.Sc.
@@ -45,13 +44,60 @@ def USBport():
     for i in availablePorts:
         if  i!= 'COM1' and i!= 'COM2' and i!= 'COM3' and i!= 'COM4' :
 		    return i
-	
-#import serial
+
+
+
+import serial
+import time
+
+# Send a question mark and a Numeric three "?3" (this will select Time_AllEdges_1Gate())
+# Send three numeric characters representing an unsigned integer number of gate pulses to measure "001"
+# Send a single numeric character to indicate which photogate to use "1"
+# Receive 4 binary bytes for the "time" of the falling edge and 4 binary bytes for the time of the rising edge.
+# If more than one gate pulse is expected more bytes will be received.
+
+def Time_AllEdges_1Gate(ser):
+    print 'Sending command for one gate time'
+    ser.write('?3')          # start of command
+    time.sleep(0.001)        # delay a ms as PIC has only two byte buffer
+    ser.write('00')
+    time.sleep(0.001)
+    ser.write('11')          # end of command 
+ 
+    reading1 = ser.read(4)   # read falling edge time
+    reading2 = ser.read(4)   # read rising edge time
+
+	# Python expects characters so they have to be converted to integers
+	# The time we need is the difference between the falling edge and rising edge 
+    theTime = int(reading2.encode('hex'), 16) - int(reading1.encode('hex'), 16) 
+
+    # Convert the time from micro seconds to seconds
+    theTime = theTime / 1000000.0
+    print theTime,
+    print 'sec'
+
+    ser.write('!')  # tell firmware to stop waiting for another edge
+                    # this should not be necessary but just in case 
+    
 
 portName = USBport()
 if portName is None:
     print 'No Virtual Ports Found'
 else:
-    print portName
+    ser = serial.Serial()
+    ser.baudrate = 1000000
+    ser.port = portName
+    ser.open()
+    if ser.isOpen() :
+        print 'Port ',
+        print portName,
+        print ' is has been opened.'
+        Time_AllEdges_1Gate(ser)
+    else:
+        print 'cannot open Port ',
+        print portName
+
+    ser.close()
+    
 	
 	
