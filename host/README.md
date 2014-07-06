@@ -2,15 +2,17 @@
 
 ## Run From Command Prompt
 
-* nameVirtualCOM.py 
+* nameVirtualCOM.py  
   Will report the name of the first USB virtual com port
-* photogate-timer.py
+* photogate-timer.py  
   Sends a command to Timer box for simple gate timing of photogate, waits for result and prints it
 
 ## Load in the QT IPython
 
-* gate1.py
+* gate1.py  
   Can be used as shown in gate1_IPython.txt (IPthon session copied here)
+
+Note that **In [4]: gate1.report_time(ser)** was entered only after an object had moved through the gate.
 
 ```python
 Python 2.7.7 |Anaconda 2.0.1 (32-bit)| (default, Jun 11 2014, 10:41:43) [MSC v.1500 32 bit (Intel)]
