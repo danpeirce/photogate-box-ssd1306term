@@ -7,7 +7,7 @@
 * photogate-timer.py  
   Sends a command to Timer box for simple gate timing of photogate, waits for result and prints it
 
-## Load in the QT IPython
+## Load in the IPython QT Console
 
 * gate1.py  
   Can be used as shown in gate1_IPython.txt (IPthon session copied here)
