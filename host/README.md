@@ -10,8 +10,6 @@
 * gate1.py  
   Can be used as shown in gate1_IPython.txt (IPthon session copied here)
 
-Note that **In [4]: gate1.report_time(ser)** was entered only after an object had moved through the gate.
-
 ```python
 Python 2.7.7 |Anaconda 2.0.1 (32-bit)| (default, Jun 11 2014, 10:41:43) [MSC v.1500 32 bit (Intel)]
 Type "copyright", "credits" or "license" for more information.
@@ -37,5 +35,5 @@ Port  COM5  has been opened.
 10.009272 sec
 
 In [4]: 
-
+ 
 ```
