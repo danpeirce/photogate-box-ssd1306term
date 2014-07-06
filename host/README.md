@@ -19,11 +19,11 @@ Type "copyright", "credits" or "license" for more information.
 IPython 2.1.0 -- An enhanced Interactive Python.
 Anaconda is brought to you by Continuum Analytics.
 Please check out: http://continuum.io/thanks and https://binstar.org
-? -> Introduction and overview of IPython's features.
+?         -> Introduction and overview of IPython's features.
 %quickref -> Quick reference.
-help -> Python's own help system.
-object? -> Details about 'object', use 'object??' for extra details.
-%guiref -> A brief reference about the graphical user interface.
+help      -> Python's own help system.
+object?   -> Details about 'object', use 'object??' for extra details.
+%guiref   -> A brief reference about the graphical user interface.
 
 In [1]: cd 'd:\photogate-box\host'
 d:\photogate-box\host
