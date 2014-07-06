@@ -56,22 +56,29 @@ import time
 # Receive 4 binary bytes for the "time" of the falling edge and 4 binary bytes for the time of the rising edge.
 # If more than one gate pulse is expected more bytes will be received.
 
-def cmd_AllEdges_1Gate(ser):
-    print 'Sending command for one gate time'
+def time_AllEdges_1Gate(ser):
     ser.write('?3')          # start of command
     time.sleep(0.001)        # delay a ms as PIC has only two byte buffer
     ser.write('00')
     time.sleep(0.001)
     ser.write('11')          # end of command 
 
-def report_time(ser):	
-    reading1 = ser.read(4)   # read falling edge time
-    reading2 = ser.read(4)   # read rising edge time
-
+    while ( ser.inWaiting() < 8 ):
+        time.sleep(0.2)
+    try:	
+        reading1 = ser.read(4)   # read falling edge time
+        reading2 = ser.read(4)   # read rising edge time
+    except ValueError:
+        print 'Did not find timing edges'
+    except SerialException:
+        print 'Serial Port not open'
 	# Python expects characters so they have to be converted to integers
 	# The time we need is the difference between the falling edge and rising edge 
-    theTime = int(reading2.encode('hex'), 16) - int(reading1.encode('hex'), 16) 
-
+    try:
+        theTime = int(reading2.encode('hex'), 16) - int(reading1.encode('hex'), 16) 
+    except ValueError:
+        theTime = 0
+        print 'Did not detect full pulse. Repeat command.'
     # Convert the time from micro seconds to seconds
     theTime = theTime / 1000000.0
     print theTime,
@@ -81,24 +88,35 @@ def report_time(ser):
                     # this should not be necessary but just in case 
     ser.close()
 
-def time_1gate():
-    portName = USBport()
-    if portName is None:
-        print 'No Virtual Ports Found'
-    else:
-        ser = serial.Serial()
-        ser.baudrate = 1000000
-        ser.port = portName
-        ser.open()
-        if ser.isOpen() :
-            print 'Port ',
-            print portName,
-            print ' has been opened.'
-            cmd_AllEdges_1Gate(ser)
+	
+def time1gate():
+    print 'running time_1gate'
+    try:
+        portName = USBport()
+        if portName is None:
+            print 'No Virtual Ports Found'
         else:
-            print 'cannot open Port ',
-            print portName
-        return ser
+            ser = serial.Serial()
+            ser.baudrate = 1000000
+            ser.port = portName
+            ser.timeout = 0
+            ser.open()
+    except SerialException:
+        print 'error opening port'
+		
+    if ser.isOpen() :
+        print 'Port ',
+        print portName,
+        print ' has been opened.'
+        time.sleep(0.25)
+        print ' '
+        time_AllEdges_1Gate(ser)
+    else:
+        print 'cannot open Port ',
+        print portName
+
+	
+
 
     
     

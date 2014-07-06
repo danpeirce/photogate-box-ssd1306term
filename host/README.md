@@ -4,8 +4,6 @@
 
 * nameVirtualCOM.py  
   Will report the name of the first USB virtual com port
-* photogate-timer.py  
-  Sends a command to Timer box for simple gate timing of photogate, waits for result and prints it
 
 ## Load in the IPython QT Console
 
@@ -27,17 +25,17 @@ help      -> Python's own help system.
 object?   -> Details about 'object', use 'object??' for extra details.
 %guiref   -> A brief reference about the graphical user interface.
 
-In [1]: cd 'd:\photogate-box\host'
+In [1]: cd 'd:/photogate-box/host'
 d:\photogate-box\host
 
 In [2]: import gate1
 
-In [3]: ser = gate1.time_1gate()
-Port COM5 has been opened.
-Sending command for one gate time
+In [3]: gate1.time1gate()
+running time_1gate
+Port  COM5  has been opened.
+ 
+10.009272 sec
 
-In [4]: gate1.report_time(ser)
-10.077498 sec
+In [4]: 
 
-In [5]: 
 ```
