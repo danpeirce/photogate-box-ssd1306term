@@ -57,23 +57,27 @@ import time
 # If more than one gate pulse is expected more bytes will be received.
 
 def time_AllEdges_1Gate(ser):
+    time.sleep(0.001)        # delay a ms as PIC has only two byte buffer
     ser.write('?3')          # start of command
     time.sleep(0.001)        # delay a ms as PIC has only two byte buffer
     ser.write('00')
     time.sleep(0.001)
     ser.write('11')          # end of command 
+    text.delete(3.0, END) 
+    time.sleep(0.01)
+    text.insert(INSERT, '\nRunning...\n')
 
 
 
 	
-def time1gate(ser):
+def ser_open_msg(ser):
     if ser.isOpen() :
         text.insert(INSERT, 'Port ')
         text.insert(INSERT, portName)
         text.insert(INSERT, ' has been opened.\n\n')
         time.sleep(0.25)
         text.insert(INSERT, ' ')
-        time_AllEdges_1Gate(ser)
+        
     else:
         text.insert(INSERT, 'cannot open Port ')
         text.insert(INSERT, portName )
@@ -87,7 +91,8 @@ root.wm_title("Time Gate Mode")
 text = Text ( root, width=30, height=10, takefocus=0)
 text.pack()
 
-text.insert(INSERT, 'running time1gate\n')
+text.insert(INSERT, 'Photogate in Gate Mode\n')
+
 try:
     portName = USBport()
     if portName is None:
@@ -98,10 +103,23 @@ try:
         ser.port = portName
         ser.timeout = 0
         ser.open()
+        ser_open_msg(ser)
 except SerialException:
     text.insert(INSERT, 'error opening port\n')
 
-time1gate(ser)
+def sendcommand():
+    time_AllEdges_1Gate(ser)
+    	
+	
+b_command = Button(root, text='Run', command=sendcommand)
+b_command.pack()
+	
+def close_window():
+    ser.close()
+    root.destroy()
+	
+b_exit = Button(root, text="Exit", command=close_window )
+b_exit.pack()
 
 def get_display_time():
     if ( ser.inWaiting() >= 8 ):
@@ -124,11 +142,11 @@ def get_display_time():
         text.insert(INSERT, str(theTime) )
         text.insert(INSERT, ' sec\n' )
 
-        ser.write('!')  # tell firmware to stop waiting for another edge
+        #ser.write('!')  # tell firmware to stop waiting for another edge
                         # this should not be necessary but just in case 
-        ser.close()
-    else:
-        root.after(10, get_display_time)
+        
+    
+    root.after(10, get_display_time)
 
 root.after(10, get_display_time)	
 root.mainloop()
