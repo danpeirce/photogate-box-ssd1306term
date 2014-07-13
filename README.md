@@ -8,7 +8,7 @@ This branch is for the PIC18F2620 MCU (used in Richmond photogate boxes).
 
 There is also a [branch for the PIC18F4525 MCU](https://github.com/danpeirce/photogate-box/tree/pic18f4525) (used in Surrey photogate boxes).
 
-![image of 2014 prototype](http://www3.telus.net/danpeirce/notes/photogate-box/box-gate.jpg)
+![image of 2014 prototype](image/box-gate.jpg)
 
 ## Source code in C
 The source code for this project is in C and is licensed under the [GNU GPL v3](http://www.gnu.org/licenses/gpl-3.0.txt).
@@ -32,7 +32,7 @@ will be added to this README.md file to reflect the photogate timer box as is cu
 
 ## PIC Wiring
 
-![image of 2014 prototype](http://www3.telus.net/danpeirce/notes/photogate-box/board_test01.jpg)
+![image of 2014 prototype](image/board_test01.jpg)
 
 The PIC inputs and outputs as defined in the source code
 
