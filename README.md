@@ -64,6 +64,6 @@ The PIC inputs and outputs as defined in the source code
 
 Photo of PCB's mounted on bracket plate which is mounted on the box lid. More detail about the mounting plate at <https://github.com/danpeirce/pic-box-bracket>
 
-![Photo of PCB's mounted on bracket plate which is mounted on the box lid](https://github.com/danpeirce/pic-box-bracket/blob/master/image/boards-mounted-bracket.jpg)
+![Photo of PCB's mounted on bracket plate which is mounted on the box lid](image/boards-mounted-bracket.jpg)
 
 ...more to come later...
