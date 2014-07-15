@@ -13,4 +13,6 @@ Sending a "**!**" while waiting for data  will tell the timer box to cancel out 
 ## Simple Python Script for Host Computer 
 
 One could write a program in C language for the host computer but using a Python script saves
-a lot of time and effort. As an example see [gate1.py](../host/gate1.py)
+a lot of time and effort. As an example see [host/gate1.py](../host/gate1.py)
+
+## GUI added to host/gate1.py to make host/gate1gui.pyw
