@@ -59,6 +59,10 @@ The PIC inputs and outputs as defined in the source code
   
 ...more details to come.
 
+## Microchip Documents
+
+* [Links to Microchip Documents and Install files](doc/MicrochipDocs.md)
+
 ## Enclosure
 
 Photo of PCB's mounted on bracket plate which is mounted on the box lid. More detail about the mounting plate at <https://github.com/danpeirce/pic-box-bracket>
