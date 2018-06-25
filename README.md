@@ -1,5 +1,15 @@
 # Photogate Box
-The photogate Box is an interface box intended to act as an interface between a photogate and a computer. 
+The photogate Box is an interface box intended to act as a photogate timer with a display. This repository
+was imported from  [https://github.com/danpeirce/photogate-box.git](https://github.com/danpeirce/photogate-box.git) which
+was a repository for a project that interfaced a photogate to a computer but lacked a display. Considerable modification
+of that project will be necessary for the new user interface which will now be switches and a SSD1306 display
+terminal. Notes on the display terminal are available at 
+[https://danpeirce.github.io/2018/oled-v1.2/oled-v1.2.html](https://danpeirce.github.io/2018/oled-v1.2/oled-v1.2.html).
+
+![](https://danpeirce.github.io/2018/oled-v1.2/photogateTimer.jpg)
+
+**The process if changing the code is only just beginning (as of June 24, 2018).**
+
 The Photogate box includes a microcontroller with built-in hardware timers.
 
 For more [information on what a photogate is *link*](https://answers.yahoo.com/question/index?qid=20080614212815AAqek64).
