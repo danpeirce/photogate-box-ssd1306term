@@ -1,7 +1,12 @@
 /*********************************************************************************************
 PhotogateLV.c Target PIC18L2620 Controls the PIC MCU as a two photogate timer.
-    Copyright (C) 2007   Michael Coombes
-    modifications 2014   Dan Peirce Copyright (C) 2014
+	extensive rewrite for new project (started in 2018). Functions that 
+	have remained substantially intact from original project will
+	be given the 2007 copyright. New code will have 2018 copywrite
+	Copyright (C) 2018   Dan Peirce B.Sc.
+	
+	main() is being essentially completely rewritten as new program requires
+	        pushbutton switch input rather than serial input
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -17,8 +22,7 @@ PhotogateLV.c Target PIC18L2620 Controls the PIC MCU as a two photogate timer.
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-This program is written for a PIC18F2620 chip used with a Solarbotics serial-to-USB TTLyFTDI adapter 
-( see https://solarbotics.com/product/39240/ )
+This program is written for a PIC18F2620 chip
 
 Two photogate plugs are connected to the CCP1 and CCP2 pins. C-18 library functions are used to 
 capture and time falling and or rising edges at the pins. Since the built-in timers are 16 
@@ -58,11 +62,7 @@ union two_bytes
 #pragma config PBADEN = OFF      // PORTB<4:0> are digital IO 
 #pragma config CCP2MX = PORTBE   // switch CCP2 from RC1 to RB3
 
-
-void wait_for_questionmark(void);
-void StatusLED_Red_Ready(void);
-void StatusLED_Green_Working(void);
-void ErrorLED(void);
+// **** original functions declarations *****
 unsigned int C1_Increment_Counter_on_Timer1_Rollover(void);
 unsigned int C2_Increment_Counter_on_Timer3_Rollover(void);
 unsigned int C12_Increment_Counter_on_Timer_Rollover(void);
@@ -74,11 +74,16 @@ void Time_AllEdges_2Gates(void);
 void newline(void);
 void integer_bytes_to_USART(unsigned int i, unsigned int j);
 void ResetUSART(void);
+// **** end original functions declarations *****
+
+void initialization(void)
 
 unsigned int counter = 0; // used to count Timer1 or Timer3 overflows and thus acts as the 
                           // upper 16 bits of a 32 bit timer
+						  // ??????  why is there only one for two overflows????
 
 unsigned char CANCEL;     //override for timing events 
+                          // ???? why all upper case -- I'd use that for a macro ?????
 
 
 //*********************************************************************************
@@ -90,123 +95,64 @@ void main (void)
   
     Delay10KTCYx(20); 
   
-    // To avoid stray input noise turn all DIO pins to outputs 
-    TRISA = 0b00000000;
-    TRISB = 0b00000000;
-    TRISC = 0b00000000;
-    // TRISD = 0b00000000;  // the PIC18F2620 does not have a D port.
-
-    // Configure 2-Way Status LED
-
-    TRISCbits.TRISC3 = 0;
-    TRISCbits.TRISC4 = 0;
- 
-    // Configure USART module
-
-    TRISCbits.TRISC6 = 0;     // set TX (RC6) as output 
-    TRISCbits.TRISC7 = 1;     // and RX (RC7) as input
-
-    OpenUSART( USART_TX_INT_OFF & USART_RX_INT_OFF & USART_ASYNCH_MODE & USART_EIGHT_BIT & 
-             USART_CONT_RX & USART_BRGH_HIGH, 1 );   
-          // baud rate is 2 000 000 / (SPBRG+1)
-          // SPBRG = 1, baud rate is 1 000 000, 
-          // SPBRG = 16, baud rate is 115 200 (good for hyperterminal debufgging)
-
-    // Configure RC2/CCP1 and RB3/CCP2 as inputs
-    // Photogate 1 is on RC2/CCP1/Pin 13 and 
-    // Photogate 2 is on RB3/CCP2/Pin 24 
-    TRISCbits.TRISC2 = 1;     // set RC2(CCP1) as input
-    TRISBbits.TRISB3 = 1;     // set RB3(CCP2) as input 
-  
-    Delay10KTCYx(10);
+    initialization();
  
 
-    while(1==1)
+    while(1)
     {
-
-        CANCEL = 0;  // reset
-        counter = 0; // reset
-        StatusLED_Red_Ready();
-        // get operational parameters    
-        wait_for_questionmark();
-        while (!DataRdyUSART());  // wait until there is a byte to read
-        gate_mode = ReadUSART();  // read one byte 
- 
-        if ( gate_mode < 48 || gate_mode >  53) gate_mode = '6'; // repeat
-  
-  
-        switch(gate_mode)
-        {
-            case '0':    
-                PhotogateStatusCheck();
-                break;
-            case '1':     
-                Time_FallingEdges_1Gate();
-                break;
-            case '2':
-                Time_FallingEdges_2Gates();
-                break;
-            case '3':
-                Time_AllEdges_1Gate();
-                break;
-            case '4':     
-                Time_AllEdges_2Gates();
-                break;
-            case '5':     
-                ResetUSART();
-                StatusLED_Green_Working();
-                Delay10KTCYx(255);   
-                break;
-            default:
-                ErrorLED();
-                break;     
-        }
+        //nothing in here yet
+		// the old project was driven by codes received over the USART
+		// the new project will be controlled by pushbutton switches
+		// to choose timer mode
+		// (or possibly a joy stick)
+    
     } 
 }
 
-
-// Check for ? key press
-// Polls serial port until '?' is received
-void wait_for_questionmark(void)
+void initialization(void)
 {
-     unsigned char repeat = ' ';
-     while (repeat != '?')
-     {
-         while (!DataRdyUSART());  // wait until there is a byte to read
-         repeat = ReadUSART();     // read one byte
-     }
-}
 
-// Turn 2-Way Status LED to red - ready for data
-void StatusLED_Red_Ready(void)
-{
-    PORTCbits.RC4 = 0;
-    PORTCbits.RC3 = 1;
-}
+    // Configure USART module
 
-// Turn 2-Way Status LED to green  - working
-void StatusLED_Green_Working(void)
-{
-    PORTCbits.RC4 = 1;
-    PORTCbits.RC3 = 0;
-}
+	TRISCbits.TRISC7 = 1;     // and RX (RC7) as input
+    TRISCbits.TRISC6 = 0;     // set TX (RC6) as output  
+    TRISCbits.TRISC5 = 0;     // unused pin
+	TRISCbits.TRISC4 = 0;     // unused pin	
+	TRISCbits.TRISC3 = 0;     // unused pin	
+	// Configure RC2/CCP1 and RB3/CCP2 as inputs
+    // Photogate 1 is on RC2/CCP1/Pin 13 and 
+    // Photogate 2 is on RB3/CCP2/Pin 24 
+    TRISCbits.TRISC2 = 1;     // set RC2(CCP1) as input
+	TRISCbits.TRISC1 = 0;     // unused pin
+    TRISCbits.TRISC0 = 0;     // unused pin	
 
-void ErrorLED(void)
-{
-    int i;
+	TRISBbits.TRISB7 = 0;     // unused pin
+	TRISBbits.TRISB6 = 0;     // unused pin
+	TRISBbits.TRISB5 = 0;     // unused pin
+	TRISBbits.TRISB4 = 0;     // unused pin
+    // Configure RC2/CCP1 and RB3/CCP2 as inputs
+    // Photogate 1 is on RC2/CCP1/Pin 13 and 
+    // Photogate 2 is on RB3/CCP2/Pin 24     
+    TRISBbits.TRISB3 = 1;     // set RB3(CCP2) as input
+    TRISBbits.TRISB2 = 0;     // unused pin
+	TRISBbits.TRISB1 = 0;     // unused pin 	
 
-    for( i=0; i<10; i++ )
-    {
-        StatusLED_Green_Working();
-        Delay10KTCYx(100); //0.10 second delay
-        StatusLED_Red_Ready();
-        Delay10KTCYx(100); //0.10 second delay
-    }
-   
-}
+	TRISA = 0; // none of the pins are used
+	
+    OpenUSART( USART_TX_INT_OFF & USART_RX_INT_OFF & USART_ASYNCH_MODE & USART_EIGHT_BIT & 
+             USART_CONT_RX & USART_BRGH_HIGH, 16 );   
+          // baud rate is 2 000 000 / (SPBRG+1)
+          // SPBRG = 1, baud rate is 1 000 000, 
+          // SPBRG = 16, baud rate is 115 200 (good for hyperterminal debugging)
+
+  
+    Delay10KTCYx(10);	
+}	
+
 
 // While waiting for a capture event on CCP1 it updates the upper 16 bits of our 32 bit
 // clock by incrementing counter on each overflow of the Timer1 clock
+// Copyright (C) 2007   Michael Coombes
 unsigned int C1_Increment_Counter_on_Timer1_Rollover(void)
 {
     while(!PIR1bits.CCP1IF && !CANCEL) // wait for event;
@@ -229,6 +175,7 @@ unsigned int C1_Increment_Counter_on_Timer1_Rollover(void)
 
 // While waiting for a capture event on CCP2 it updates the upper 16 bits of our 32 bit
 // clock by incrementing counter on each overflow of the Timer3 clock
+// Copyright (C) 2007   Michael Coombes
 unsigned int C2_Increment_Counter_on_Timer3_Rollover(void)
 {
     while(!PIR2bits.CCP2IF && !CANCEL) // wait for event;
@@ -250,6 +197,7 @@ unsigned int C2_Increment_Counter_on_Timer3_Rollover(void)
 
 // While waiting for a capture event on CCP1 or CCP2 it updates the upper 16 bits of our 
 // 32 bit clock by incrementing counter on each overflow of the Timer1 or Timer3 clock
+// Copyright (C) 2007   Michael Coombes
 unsigned int C12_Increment_Counter_on_Timer_Rollover(void)
 {
     while(!PIR1bits.CCP1IF && !PIR2bits.CCP2IF  && !CANCEL) // wait for event;
@@ -272,6 +220,7 @@ unsigned int C12_Increment_Counter_on_Timer_Rollover(void)
 
 //  Photogate 1 is read on RC1 and Photogate 2 is read by RB3 (was RC2)
 //  Result of read converted to an ascii digit for convenience
+//  Copyright (C) 2007   Michael Coombes
 void PhotogateStatusCheck(void)
 {
     unsigned char gate_status;
@@ -287,6 +236,7 @@ void PhotogateStatusCheck(void)
 }
 
 // Times falling edges on either CCP1 using Timer1 or CCP2 using Timer 3
+// Copyright (C) 2007   Michael Coombes
 void Time_FallingEdges_1Gate(void)
 {
     unsigned char gate_to_use = '1'; // default is gate 1
@@ -364,6 +314,7 @@ void Time_FallingEdges_1Gate(void)
 }     
 
 // Times falling edges on both CCP1 and CCP2  using Timer1 
+// Copyright (C) 2007   Michael Coombes
 void Time_FallingEdges_2Gates(void)
 {
     char string[4];                                        // string to get numbers
@@ -454,6 +405,7 @@ void Time_FallingEdges_2Gates(void)
 }
 
 // Times falling and rising edges on either CCP1 using Timer1 or CCP2 using Timer 3
+// Copyright (C) 2007   Michael Coombes
 void Time_AllEdges_1Gate(void)
 {
     unsigned char gate_to_use = '1';
@@ -563,6 +515,7 @@ void Time_AllEdges_1Gate(void)
 }     
 
 // Times falling and rising edges on both CCP1 and CCP2 using Timer1  
+// Copyright (C) 2007   Michael Coombes
 void Time_AllEdges_2Gates(void)
 {
     char string[4];                                        // string to get numbers
@@ -672,6 +625,7 @@ void Time_AllEdges_2Gates(void)
 }
 
 // if I need a newline
+// Copyright (C) 2007   Michael Coombes
 void newline(void)
 {
     while(BusyUSART());
@@ -680,6 +634,7 @@ void newline(void)
 }
 
 // takes two 16-bit integers and breaks them into 4 bytes to send to the serial port.
+// Copyright (C) 2007   Michael Coombes
 void integer_bytes_to_USART(unsigned int i, unsigned int j)
 {
     union two_bytes value;
@@ -695,13 +650,4 @@ void integer_bytes_to_USART(unsigned int i, unsigned int j)
 
 }
 
-// Close and Reopen USART - seems necessary on some SparkFun Serial USB boards.
-void ResetUSART(void)
-{
-    while(BusyUSART()); // wait until the buffer is free before closing
-    CloseUSART();
-    OpenUSART( USART_TX_INT_OFF & USART_RX_INT_OFF & USART_ASYNCH_MODE & USART_EIGHT_BIT & 
-             USART_CONT_RX & USART_BRGH_HIGH, 1 );   
-    Delay10KTCYx(10);
-}
 
