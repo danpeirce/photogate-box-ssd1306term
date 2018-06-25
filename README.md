@@ -14,23 +14,13 @@ The Photogate box includes a microcontroller with built-in hardware timers.
 
 For more [information on what a photogate is *link*](https://answers.yahoo.com/question/index?qid=20080614212815AAqek64).
 
-This branch is for the PIC18F2620 MCU (used in Richmond photogate boxes).
-
-There is also a [branch for the PIC18F4525 MCU](https://github.com/danpeirce/photogate-box/tree/pic18f4525) (used in Surrey photogate boxes).
+This branch is for the PIC18F2620 MCU. 
 
 ![image of 2014 prototype](image/box-gate.jpg)
 
 ## Source code in C
 The source code for this project is in C and is licensed under the [GNU GPL v3](http://www.gnu.org/licenses/gpl-3.0.txt).
 See the file PhotogateLV.c
-
-Modified in 2014 for XC8 compiler and to use an external clock
-
-## Communication between Timer Box and Host
-
-In general the timer box firmware sits in the main while loop wating for a command from the host. A command always starts with a question mark followed by a single numeric character. The rest of the command is command dependent. Onces times have been aquired by the timer box they are sent to the host as four byte binary values.
-
-* See [host/README.md](host/README.md)
 
 ##Prototype project from 2006. 
 
