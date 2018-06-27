@@ -27,7 +27,7 @@ See the file PhotogateLV.c
 > Some changes have been made that were not included in the notes at the link given below. Details
 will be added to this README.md file to reflect the photogate timer box as is currently used.
 
-* [Photogate Box Notes from 2006-2007](http://www.kwantlen.ca/science/physics/faculty/dpeirce/notes/timer_box/)
+* [Photogate Box Notes from 2006-2007](https://danpeirce.github.io/2006/timer_box/index.html)
 
 ## PIC Wiring
 
@@ -35,13 +35,6 @@ will be added to this README.md file to reflect the photogate timer box as is cu
 
 The PIC inputs and outputs as defined in the source code
 
-```c
-// Configure 2-Way Status LED
-
-  TRISCbits.TRISC3 = 0;     // set as output 
-  TRISCbits.TRISC4 = 0;     // and as output
-```
-  
 ```c
   // Configure USART module
 
@@ -70,3 +63,13 @@ Photo of PCB's mounted on bracket plate which is mounted on the box lid. More de
 ![Photo of PCB's mounted on bracket plate which is mounted on the box lid](image/boards-mounted-bracket.jpg)
 
 ...more to come later...
+
+## Legacy Peripheral libraries
+
+* When installing xc8 on new computer the legacy peripheral libraries must also be downloaded and installed for 
+  this project. The Plib is a separate download starting with XC8 version 1.35.
+  
+* MPLAB-8:  **Project > Build Options > Project**, select **Linker tab**, and under Runtime options check **Link in 
+  Peripheral Library.**
+  
+* Also add the path to the location of the peripheral libraries.
