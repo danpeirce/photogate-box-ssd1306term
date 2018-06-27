@@ -76,7 +76,7 @@ void integer_bytes_to_USART(unsigned int i, unsigned int j);
 void ResetUSART(void);
 // **** end original functions declarations *****
 
-void initialization(void)
+void initialization(void);
 
 unsigned int counter = 0; // used to count Timer1 or Timer3 overflows and thus acts as the 
                           // upper 16 bits of a 32 bit timer
@@ -89,7 +89,7 @@ unsigned char CANCEL;     //override for timing events
 //*********************************************************************************
 //                               main
 //*********************************************************************************
-void main (void)
+void main(void)
 {
     char gate_mode = 0; 
   
@@ -224,7 +224,6 @@ unsigned int C12_Increment_Counter_on_Timer_Rollover(void)
 void PhotogateStatusCheck(void)
 {
     unsigned char gate_status;
-    StatusLED_Green_Working(); // set LED
     gate_status = (PORTCbits.RC2 + (PORTBbits.RB3 << 1));  // read photogate pins     
     gate_status = 3 - gate_status + 48;                       // convert to an ascii digit
                                                            // '0' both off
@@ -250,7 +249,6 @@ void Time_FallingEdges_1Gate(void)
     while (!DataRdyUSART());              // wait until there is a byte to read
     gate_to_use = getcUSART();            // using this variable to keep track of photogate to use
 
-    StatusLED_Green_Working();
   
     counter = 0;           // reset 
 
@@ -328,7 +326,7 @@ void Time_FallingEdges_2Gates(void)
 
     Gate_counter_end = 2 * number_edge_pairs_per_gate;
 
-    StatusLED_Green_Working();
+//    StatusLED_Green_Working();
 
     // configure Timer for capture mode at 8*TOSC = 1 microsec.
     OpenTimer1(TIMER_INT_OFF & T1_16BIT_RW & T1_SOURCE_INT & T1_PS_1_8 & T1_SOURCE_CCP);
@@ -422,7 +420,7 @@ void Time_AllEdges_1Gate(void)
     while (!DataRdyUSART());  // wait until there is a byte to read
     gate_to_use = getcUSART();  
 
-    StatusLED_Green_Working();
+//    StatusLED_Green_Working();
   
     counter = 0;           // reset 
 
@@ -529,7 +527,7 @@ void Time_AllEdges_2Gates(void)
  
     Gate_counter_end = 2 * number_edge_pairs_per_gate;
 
-    StatusLED_Green_Working();
+//    StatusLED_Green_Working();
 
     // configure Timers for capture mode at 8*TOSC = 1 microsec.
     OpenTimer1(TIMER_INT_OFF & T1_16BIT_RW & T1_SOURCE_INT & T1_PS_1_8 & T1_SOURCE_CCP);
