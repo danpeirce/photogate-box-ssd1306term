@@ -22,7 +22,7 @@ This branch is for the PIC18F2620 MCU.
 The source code for this project is in C and is licensed under the [GNU GPL v3](http://www.gnu.org/licenses/gpl-3.0.txt).
 See the file PhotogateLV.c
 
-##Prototype project from 2006. 
+## Prototype project from 2006. 
 
 > Some changes have been made that were not included in the notes at the link given below. Details
 will be added to this README.md file to reflect the photogate timer box as is currently used.
