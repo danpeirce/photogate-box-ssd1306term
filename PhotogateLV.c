@@ -43,6 +43,7 @@ flashing for error.
 #include <delays.h>   // XC8 Compiler Library for delay functions 
 #include <timers.h>   // XC8 Compiler Library for timer functions 
 #include <capture.h>  // XC8 Compiler Library for capture functions 
+#include <stdio.h>     
 
 
 union two_bytes
@@ -56,12 +57,17 @@ union two_bytes
 };
 
 #pragma config WDT = OFF
-#pragma config OSC = EC   // using an external clock (oscillator connected to pin 9 of PIC18F2620)
+// initial testing done without external oscillator
+//#pragma config OSC = EC   // using an external clock (oscillator connected to pin 9 of PIC18F2620)
+#pragma config OSC = INTIO67  // allows osc1 (pin 13) and osc2 (pin 14) to be used as inputs
+                              // note there is a crystal attached to these pins on the 
+                              // brainboard
 #pragma config MCLRE = OFF
 #pragma config LVP = OFF
 #pragma config PBADEN = OFF      // PORTB<4:0> are digital IO 
 #pragma config CCP2MX = PORTBE   // switch CCP2 from RC1 to RB3
 
+void set_osc_32MHz(void);
 // **** original functions declarations *****
 unsigned int C1_Increment_Counter_on_Timer1_Rollover(void);
 unsigned int C2_Increment_Counter_on_Timer3_Rollover(void);
@@ -76,6 +82,9 @@ void integer_bytes_to_USART(unsigned int i, unsigned int j);
 void ResetUSART(void);
 // **** end original functions declarations *****
 
+#define SHIFTOUT 0x0E
+#define REVERT 'r'
+
 void initialization(void);
 
 unsigned int counter = 0; // used to count Timer1 or Timer3 overflows and thus acts as the 
@@ -85,28 +94,56 @@ unsigned int counter = 0; // used to count Timer1 or Timer3 overflows and thus a
 unsigned char CANCEL;     //override for timing events 
                           // ???? why all upper case -- I'd use that for a macro ?????
 
+long count = 0;
 
 //*********************************************************************************
 //                               main
 //*********************************************************************************
 void main(void)
 {
+    set_osc_32MHz(); // only used when using internal oscillator fir initial 
+                     // testing
     char gate_mode = 0; 
   
     Delay10KTCYx(20); 
   
     initialization();
  
-
     while(1)
-    {
-        //nothing in here yet
-		// the old project was driven by codes received over the USART
-		// the new project will be controlled by pushbutton switches
-		// to choose timer mode
-		// (or possibly a joy stick)
-    
+    { 
+        count++;
+        if (count > 500000)
+        {
+            static unsigned int cycle = 0; 
+            static const char code[] = {SHIFTOUT, REVERT, 0};
+            count = 0;
+            printf("%s> %d\n", code, cycle);
+            cycle++;
+        }
     } 
+}
+
+void putch(char data)
+{
+    while( ! TXIF)
+    continue;
+    TXREG = data;
+}
+
+// only used when using internal oscillator for initial testing
+void set_osc_32MHz(void)
+{
+  int i;
+ 
+  OSCCONbits.IRCF2 = 1;     // Set the OSCILLATOR Control Register to 8 MHz
+  OSCCONbits.IRCF1 = 1;      
+  OSCCONbits.IRCF0 = 1;     
+ 
+  OSCTUNEbits.PLLEN = 1;    // Enable PLL, boost by 4 -> 32 MHz
+
+  for(i=0;i<500;i++);       // delay to allow clock PLL to lock (stabilize)
+
+      
 }
 
 void initialization(void)
@@ -139,6 +176,7 @@ void initialization(void)
 
 	TRISA = 0; // none of the pins are used
 	
+
     OpenUSART( USART_TX_INT_OFF & USART_RX_INT_OFF & USART_ASYNCH_MODE & USART_EIGHT_BIT & 
              USART_CONT_RX & USART_BRGH_HIGH, 16 );   
           // baud rate is 2 000 000 / (SPBRG+1)
