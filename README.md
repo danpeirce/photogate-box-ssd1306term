@@ -31,8 +31,6 @@ will be added to this README.md file to reflect the photogate timer box as is cu
 
 ## PIC Wiring
 
-![image of 2014 prototype](image/board_test01.jpg)
-
 The PIC inputs and outputs as defined in the source code.
 
 ## Microchip Documents
