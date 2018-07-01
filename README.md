@@ -16,6 +16,12 @@ This branch is for the PIC18F4525 MCU rather than the PIC18F2620. Primarily beca
 handy on a breadboard. It will make no difference to the final code. I did not have an external oscillator handy 
 so this initial testing is being done with the internal oscillator.
 
+For now work is being done on a breadboard.
+
+![](https://danpeirce.github.io/2018/oled-v1.2/justcountcct.jpg)
+
+The prototype from 2014 looked like this and had a USB interface and no display.
+
 ![image of 2014 prototype](image/box-gate.jpg)
 
 ## Source code in C
