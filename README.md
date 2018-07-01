@@ -1,5 +1,5 @@
 # Photogate Box
-The photogate -Box- *timer* is intended to act as a photogate timer with a display. This is a work in progress and
+The photogate ~~Box~~ *timer* is intended to act as a photogate timer with a display. This is a work in progress and
 considerable modification of old projects will be necessary for the new user interface which will now be switches 
 and a SSD1306 display terminal. Notes on the display terminal are available at 
 [https://danpeirce.github.io/2018/oled-v1.2/oled-v1.2.html](https://danpeirce.github.io/2018/oled-v1.2/oled-v1.2.html).
