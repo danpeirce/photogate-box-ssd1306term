@@ -115,7 +115,7 @@ void main(void)
         if (count > 500000)
         {
             static unsigned int cycle = 0; 
-            static const char code[] = {SHIFTOUT, REVERT, 0};
+            static const char code[] = {SHIFTOUT, 'w', '2', 0};
             count = 0;
             printf("%s> %d\n", code, cycle);
             cycle++;
