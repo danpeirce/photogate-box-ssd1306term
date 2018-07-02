@@ -103,23 +103,23 @@ void main(void)
 {
     set_osc_32MHz(); // only used when using internal oscillator fir initial 
                      // testing
-    char gate_mode = 0; 
+    char gate_mode = 0;
+    char keyp = 0, keyplast =0;
+    static char code[] = { SHIFTOUT, 'w', '2', 0 };
   
     Delay10KTCYx(20); 
   
     initialization();
  
     while(1)
-    { 
-        count++;
-        if (count > 500000)
+    {   
+        keyp = PORTDbits.RD2;
+        if (keyp != keyplast)
         {
-            static unsigned int cycle = 0; 
-            static const char code[] = {SHIFTOUT, 'w', '2', 0};
-            count = 0;
-            printf("%s> %d\n", code, cycle);
-            cycle++;
+            if (keyp == 1) {printf("%sKey Press\n", code);}
+            else printf("%sKey Release\n", code);
         }
+        keyplast = keyp;
     } 
 }
 
@@ -176,6 +176,8 @@ void initialization(void)
 
 	TRISA = 0; // none of the pins are used
 	
+	TRISD = 0;  // for PIC18F4525 only
+	TRISDbits.TRISD2 = 1;     // pushbutton switch on pin18f4525 -- will change port for pic18f2620 
 
     OpenUSART( USART_TX_INT_OFF & USART_RX_INT_OFF & USART_ASYNCH_MODE & USART_EIGHT_BIT & 
              USART_CONT_RX & USART_BRGH_HIGH, 16 );   
