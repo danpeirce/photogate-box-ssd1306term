@@ -96,6 +96,10 @@ unsigned char CANCEL;     //override for timing events
 
 long count = 0;
 
+char buffer[100];
+char outIndexBuff = 0; 
+char inIndexBuff = 0;
+
 //*********************************************************************************
 //                               main
 //*********************************************************************************
@@ -105,6 +109,7 @@ void main(void)
                      // testing
     char gate_mode = 0;
     char keyp = 0, keyplast =0;
+
     static char code[] = { SHIFTOUT, 'w', '2', 0 };
   
     Delay10KTCYx(20); 
@@ -116,18 +121,28 @@ void main(void)
         keyp = PORTDbits.RD2;
         if (keyp != keyplast)
         {
-            if (keyp == 1) {printf("%sKey Press\n", code);}
-            else printf("%sKey Release\n", code);
+            if (keyp == 1) 
+            {
+                inIndexBuff = inIndexBuff + sprintf( buffer+inIndexBuff, "%sKey Press\n", code);
+                
+            }
+            else 
+            {
+                inIndexBuff = inIndexBuff + sprintf( buffer+inIndexBuff,"%sKey Release\n", code);
+            }
         }
         keyplast = keyp;
+        if(TXIF && (inIndexBuff > 0))
+        {
+            TXREG = buffer[outIndexBuff];
+            outIndexBuff++;
+            if (inIndexBuff == outIndexBuff) 
+            {
+                inIndexBuff = 0;
+                outIndexBuff= 0;
+            }
+        }
     } 
-}
-
-void putch(char data)
-{
-    while( ! TXIF)
-    continue;
-    TXREG = data;
 }
 
 // only used when using internal oscillator for initial testing
