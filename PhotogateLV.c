@@ -68,6 +68,9 @@ union two_bytes
 #pragma config CCP2MX = PORTBE   // switch CCP2 from RC1 to RB3
 
 void set_osc_32MHz(void);
+void keypresstask(void);
+void txbuffertask(void);
+
 // **** original functions declarations *****
 unsigned int C1_Increment_Counter_on_Timer1_Rollover(void);
 unsigned int C2_Increment_Counter_on_Timer3_Rollover(void);
@@ -99,6 +102,7 @@ long count = 0;
 char buffer[100];
 char outIndexBuff = 0; 
 char inIndexBuff = 0;
+static char code[] = { SHIFTOUT, 'w', '2', 0 };
 
 //*********************************************************************************
 //                               main
@@ -108,40 +112,20 @@ void main(void)
     set_osc_32MHz(); // only used when using internal oscillator fir initial 
                      // testing
     char gate_mode = 0;
-    char keyp = 0, keyplast =0;
-
-    static char code[] = { SHIFTOUT, 'w', '2', 0 };
-  
     Delay10KTCYx(20); 
   
     initialization();
  
     while(1)
-    {   
-        keyp = PORTDbits.RD2;
-        if (keyp != keyplast)
+    {  
+        static int loopcount=0;
+        if (loopcount > 500)
         {
-            if (keyp == 1) 
-            {
-                inIndexBuff = inIndexBuff + sprintf( buffer+inIndexBuff, "%sKey Press\n", code);
-                
-            }
-            else 
-            {
-                inIndexBuff = inIndexBuff + sprintf( buffer+inIndexBuff,"%sKey Release\n", code);
-            }
+            keypresstask();
+            loopcount=0;
         }
-        keyplast = keyp;
-        if(TXIF && (inIndexBuff > 0))
-        {
-            TXREG = buffer[outIndexBuff];
-            outIndexBuff++;
-            if (inIndexBuff == outIndexBuff) 
-            {
-                inIndexBuff = 0;
-                outIndexBuff= 0;
-            }
-        }
+        loopcount++;
+        txbuffertask();
     } 
 }
 
@@ -161,6 +145,38 @@ void set_osc_32MHz(void)
       
 }
 
+void keypresstask(void)
+{
+    static char keyp = 0, keyplast =0;
+    keyp = PORTDbits.RD2;
+    if (keyp != keyplast)
+    {
+        if (keyp == 1) 
+        {
+            inIndexBuff = inIndexBuff + sprintf( buffer+inIndexBuff, "%sKey Press\n", code);
+
+        }
+        else 
+        {
+            inIndexBuff = inIndexBuff + sprintf( buffer+inIndexBuff,"%sKey Release\n", code);
+        }
+    }
+    keyplast = keyp;
+}
+
+void txbuffertask(void)
+{
+    if(TXIF && (inIndexBuff > 0))
+    {
+        TXREG = buffer[outIndexBuff];
+        outIndexBuff++;
+        if (inIndexBuff == outIndexBuff) 
+        {
+            inIndexBuff = 0;
+            outIndexBuff= 0;
+        }
+    }
+}
 void initialization(void)
 {
 

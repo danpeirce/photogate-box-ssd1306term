@@ -11,6 +11,10 @@ considerable modification of old projects will be necessary for the new user int
 and a SSD1306 display terminal. Notes on the display terminal are available at 
 [https://danpeirce.github.io/2018/oled-v1.2/oled-v1.2.html](https://danpeirce.github.io/2018/oled-v1.2/oled-v1.2.html).
 
+Notes specific for this branch are at:
+
+* [https://danpeirce.github.io/2018/oled-v1.2/oled-v1.2.html#keypress](https://danpeirce.github.io/2018/oled-v1.2/oled-v1.2.html#keypress)
+
 ![](https://danpeirce.github.io/2018/oled-v1.2/justcount.jpg)
 
 **The process if changing the code is only just beginning (as of June 24, 2018).**
