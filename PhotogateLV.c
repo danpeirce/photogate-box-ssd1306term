@@ -148,18 +148,16 @@ void set_osc_32MHz(void)
 void keypresstask(void)
 {
     static char keyp = 0, keyplast =0;
+    static unsigned int countpresses = 0;
     keyp = PORTDbits.RD2;
     if (keyp != keyplast)
     {
         if (keyp == 1) 
         {
-            inIndexBuff = inIndexBuff + sprintf( buffer+inIndexBuff, "%sKey Press\n", code);
+            countpresses++;
+            inIndexBuff = inIndexBuff + sprintf( buffer+inIndexBuff, "%sKPress %i\n", code, countpresses);
+        }
 
-        }
-        else 
-        {
-            inIndexBuff = inIndexBuff + sprintf( buffer+inIndexBuff,"%sKey Release\n", code);
-        }
     }
     keyplast = keyp;
 }

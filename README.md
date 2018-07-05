@@ -1,10 +1,8 @@
 # Photogate Box
 
-In this branch the display simply indicates when a pushbutton switch has been pressed.
+This branch (swtchpresscount) counts the number of times a button switch has been pressed.
 
-![](image/keypress.jpg)
-
-![](image/keyrelease.jpg)
+  *needs new photo*
 
 The photogate ~~Box~~ *timer* is intended to act as a photogate timer with a display. This is a work in progress and
 considerable modification of old projects will be necessary for the new user interface which will now be switches 
