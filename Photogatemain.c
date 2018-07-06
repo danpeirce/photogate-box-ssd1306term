@@ -1,8 +1,6 @@
 /*********************************************************************************************
-PhotogateLV.c Target PIC18L2620 Controls the PIC MCU as a two photogate timer.
-	extensive rewrite for new project (started in 2018). Functions that 
-	have remained substantially intact from original project will
-	be given the 2007 copyright. New code will have 2018 copywrite
+PhotogateLV.c Target PIC18F4525 Controls the PIC MCU as a two photogate timer.
+	extensive rewrite for new project (started in 2018). 
 	Copyright (C) 2018   Dan Peirce B.Sc.
 	
 	main() is being essentially completely rewritten as new program requires
@@ -22,18 +20,8 @@ PhotogateLV.c Target PIC18L2620 Controls the PIC MCU as a two photogate timer.
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-This program is written for a PIC18F2620 chip
-
-Two photogate plugs are connected to the CCP1 and CCP2 pins. C-18 library functions are used to 
-capture and time falling and or rising edges at the pins. Since the built-in timers are 16 
-bit, a counter is used to count timer rollovers and create a 32 bit clock.
-
-Chip is set to 32 MHz by an external clock. Timers are set to measure in microseconds. 
-
-Maximum time before total rollover is 2^16 * 2^16 * 1 musec = 4294 seconds = 71 minutes.
-
-A two-colour LED between RC3 and RC4 is used as an indicator: Red for ready, green for busy, 
-flashing for error.
+This program is written for a PIC18F4525 chip
+ * some of the old comments may have pin ref to PIC18F2620
 
 ***********************************************************************************************/
 
