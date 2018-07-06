@@ -56,8 +56,8 @@ union two_bytes
 #pragma config CCP2MX = PORTBE   // switch CCP2 from RC1 to RB3
 
 void set_osc_32MHz(void);
-void keypresstask(void);
 void txbuffertask(void);
+void sendTime(unsigned int *listTmr);
 
 
 
@@ -66,12 +66,8 @@ void txbuffertask(void);
 
 void initialization(void);
 
-unsigned int counter = 0; // used to count Timer1 or Timer3 overflows and thus acts as the 
-                          // upper 16 bits of a 32 bit timer
-						  // ??????  why is there only one for two overflows????
-
-unsigned char CANCEL;     //override for timing events 
-                          // ???? why all upper case -- I'd use that for a macro ?????
+unsigned int timerCountOvrF = 0; // used to count Timer1 or Timer3 overflows and thus acts as the 
+                                // upper 16 bits of a 32 bit timer
 
 long count = 0;
 
@@ -93,16 +89,35 @@ void main(void)
     initialization();
  
     while(1)
-    {  
-        static int loopcount=0;
-        if (loopcount > 500)
+    { 
+        static unsigned int listTmr[] = {0,0,0,0,0,0};
+        static unsigned int indexTmr = 0;
+        if(TXIF && (inIndexBuff > 0)) txbuffertask();
+        if (PIR1bits.TMR1IF) // Timer1 clock has overflowed
         {
-            keypresstask();
-            loopcount=0;
+            PIR1bits.TMR1IF = 0; // reset Timer1 clock interrupt flag
+            timerCountOvrF++;
         }
-        loopcount++;
-        txbuffertask();
+        if (PIR1bits.CCP1IF)
+        {
+            listTmr[indexTmr] = ReadCapture1();
+            indexTmr++;
+            listTmr[indexTmr] = timerCountOvrF;
+            indexTmr++;
+            PIR1bits.CCP1IF = 0; //clear flag for next event
+        }
+        if (indexTmr == 4) 
+        {    
+            sendTime(listTmr);
+            indexTmr = 0;
+        }
     } 
+}
+
+void sendTime(unsigned int *listTmr)
+{
+    //work on this next
+   // inIndexBuff = inIndexBuff + sprintf( buffer+inIndexBuff, "%s%u%u%u%u\n", code, countpresses);
 }
 
 // only used when using internal oscillator for initial testing
@@ -121,36 +136,19 @@ void set_osc_32MHz(void)
       
 }
 
-void keypresstask(void)
-{
-    static char keyp = 0, keyplast =0;
-    static unsigned int countpresses = 0;
-    keyp = PORTDbits.RD2;
-    if (keyp != keyplast)
-    {
-        if (keyp == 1) 
-        {
-            countpresses++;
-            inIndexBuff = inIndexBuff + sprintf( buffer+inIndexBuff, "%sKPress %i\n", code, countpresses);
-        }
 
-    }
-    keyplast = keyp;
-}
 
 void txbuffertask(void)
 {
-    if(TXIF && (inIndexBuff > 0))
+    TXREG = buffer[outIndexBuff];
+    outIndexBuff++;
+    if (inIndexBuff == outIndexBuff) 
     {
-        TXREG = buffer[outIndexBuff];
-        outIndexBuff++;
-        if (inIndexBuff == outIndexBuff) 
-        {
-            inIndexBuff = 0;
-            outIndexBuff= 0;
-        }
+        inIndexBuff = 0;
+        outIndexBuff= 0;
     }
 }
+
 void initialization(void)
 {
 
@@ -190,7 +188,10 @@ void initialization(void)
           // SPBRG = 1, baud rate is 1 000 000, 
           // SPBRG = 16, baud rate is 115 200 (good for hyperterminal debugging)
 
-  
+    OpenTimer1(TIMER_INT_OFF & T1_16BIT_RW & T1_SOURCE_INT & T1_PS_1_8 & T1_CCP1_T3_CCP2);
+    WriteTimer1(0);  // thinking of having having timers running always
+    PIR1bits.TMR1IF = 0;
+    OpenCapture1(C1_EVERY_FALL_EDGE & CAPTURE_INT_OFF); // ma move this to different function  
     Delay10KTCYx(10);	
 }	
 
