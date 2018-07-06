@@ -1,30 +1,5 @@
-/*********************************************************************************************
-PhotogateLV.c Target PIC18L2620 Controls the PIC MCU as a two photogate timer.
-	extensive rewrite for new project (started in 2018). Functions that 
-	have remained substantially intact from original project will
-	be given the 2007 copyright. New code will have 2018 copywrite
-	Copyright (C) 2018   Dan Peirce B.Sc.
-	
-	main() is being essentially completely rewritten as new program requires
-	        pushbutton switch input rather than serial input
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
-
-This program is written for a PIC18F2620 chip
-
-Two photogate plugs are connected to the CCP1 and CCP2 pins. C-18 library functions are used to 
+ * The following is not yet implemented
+Two photogate plugs are connected to the CCP1 and CCP2 pins. xc8 peripheral library functions are used to 
 capture and time falling and or rising edges at the pins. Since the built-in timers are 16 
 bit, a counter is used to count timer rollovers and create a 32 bit clock.
 
@@ -32,42 +7,8 @@ Chip is set to 32 MHz by an external clock. Timers are set to measure in microse
 
 Maximum time before total rollover is 2^16 * 2^16 * 1 musec = 4294 seconds = 71 minutes.
 
-A two-colour LED between RC3 and RC4 is used as an indicator: Red for ready, green for busy, 
-flashing for error.
-
-***********************************************************************************************/
-
-#include <xc.h>
-#include <usart.h>    // XC8 Compiler Library for USART functions 
-#include <stdlib.h>   // XC8 Compiler Library for atoi() function
-#include <delays.h>   // XC8 Compiler Library for delay functions 
-#include <timers.h>   // XC8 Compiler Library for timer functions 
-#include <capture.h>  // XC8 Compiler Library for capture functions 
-#include <stdio.h>     
 
 
-union two_bytes
-{
-    unsigned int an_integer;
-    struct
-    {
-        unsigned lower_byte:8;
-        unsigned upper_byte:8;
-    };  
-};
-
-#pragma config WDT = OFF
-// initial testing done without external oscillator
-//#pragma config OSC = EC   // using an external clock (oscillator connected to pin 9 of PIC18F2620)
-#pragma config OSC = INTIO67  // allows osc1 (pin 13) and osc2 (pin 14) to be used as inputs
-                              // note there is a crystal attached to these pins on the 
-                              // brainboard
-#pragma config MCLRE = OFF
-#pragma config LVP = OFF
-#pragma config PBADEN = OFF      // PORTB<4:0> are digital IO 
-#pragma config CCP2MX = PORTBE   // switch CCP2 from RC1 to RB3
-
-void set_osc_32MHz(void);
 // **** original functions declarations *****
 unsigned int C1_Increment_Counter_on_Timer1_Rollover(void);
 unsigned int C2_Increment_Counter_on_Timer3_Rollover(void);
@@ -81,114 +22,6 @@ void newline(void);
 void integer_bytes_to_USART(unsigned int i, unsigned int j);
 void ResetUSART(void);
 // **** end original functions declarations *****
-
-#define SHIFTOUT 0x0E
-#define REVERT 'r'
-
-void initialization(void);
-
-unsigned int counter = 0; // used to count Timer1 or Timer3 overflows and thus acts as the 
-                          // upper 16 bits of a 32 bit timer
-						  // ??????  why is there only one for two overflows????
-
-unsigned char CANCEL;     //override for timing events 
-                          // ???? why all upper case -- I'd use that for a macro ?????
-
-long count = 0;
-
-//*********************************************************************************
-//                               main
-//*********************************************************************************
-void main(void)
-{
-    set_osc_32MHz(); // only used when using internal oscillator fir initial 
-                     // testing
-    char gate_mode = 0;
-    char keyp = 0, keyplast =0;
-    static char code[] = { SHIFTOUT, 'w', '2', 0 };
-  
-    Delay10KTCYx(20); 
-  
-    initialization();
- 
-    while(1)
-    {   
-        keyp = PORTDbits.RD2;
-        if (keyp != keyplast)
-        {
-            if (keyp == 1) {printf("%sKey Press\n", code);}
-            else printf("%sKey Release\n", code);
-        }
-        keyplast = keyp;
-    } 
-}
-
-void putch(char data)
-{
-    while( ! TXIF)
-    continue;
-    TXREG = data;
-}
-
-// only used when using internal oscillator for initial testing
-void set_osc_32MHz(void)
-{
-  int i;
- 
-  OSCCONbits.IRCF2 = 1;     // Set the OSCILLATOR Control Register to 8 MHz
-  OSCCONbits.IRCF1 = 1;      
-  OSCCONbits.IRCF0 = 1;     
- 
-  OSCTUNEbits.PLLEN = 1;    // Enable PLL, boost by 4 -> 32 MHz
-
-  for(i=0;i<500;i++);       // delay to allow clock PLL to lock (stabilize)
-
-      
-}
-
-void initialization(void)
-{
-
-    // Configure USART module
-
-	TRISCbits.TRISC7 = 1;     // and RX (RC7) as input
-    TRISCbits.TRISC6 = 0;     // set TX (RC6) as output  
-    TRISCbits.TRISC5 = 0;     // unused pin
-	TRISCbits.TRISC4 = 0;     // unused pin	
-	TRISCbits.TRISC3 = 0;     // unused pin	
-	// Configure RC2/CCP1 and RB3/CCP2 as inputs
-    // Photogate 1 is on RC2/CCP1/Pin 13 and 
-    // Photogate 2 is on RB3/CCP2/Pin 24 
-    TRISCbits.TRISC2 = 1;     // set RC2(CCP1) as input
-	TRISCbits.TRISC1 = 0;     // unused pin
-    TRISCbits.TRISC0 = 0;     // unused pin	
-
-	TRISBbits.TRISB7 = 0;     // unused pin
-	TRISBbits.TRISB6 = 0;     // unused pin
-	TRISBbits.TRISB5 = 0;     // unused pin
-	TRISBbits.TRISB4 = 0;     // unused pin
-    // Configure RC2/CCP1 and RB3/CCP2 as inputs
-    // Photogate 1 is on RC2/CCP1/Pin 13 and 
-    // Photogate 2 is on RB3/CCP2/Pin 24     
-    TRISBbits.TRISB3 = 1;     // set RB3(CCP2) as input
-    TRISBbits.TRISB2 = 0;     // unused pin
-	TRISBbits.TRISB1 = 0;     // unused pin 	
-
-	TRISA = 0; // none of the pins are used
-	
-	TRISD = 0;  // for PIC18F4525 only
-	TRISDbits.TRISD2 = 1;     // pushbutton switch on pin18f4525 -- will change port for pic18f2620 
-
-    OpenUSART( USART_TX_INT_OFF & USART_RX_INT_OFF & USART_ASYNCH_MODE & USART_EIGHT_BIT & 
-             USART_CONT_RX & USART_BRGH_HIGH, 16 );   
-          // baud rate is 2 000 000 / (SPBRG+1)
-          // SPBRG = 1, baud rate is 1 000 000, 
-          // SPBRG = 16, baud rate is 115 200 (good for hyperterminal debugging)
-
-  
-    Delay10KTCYx(10);	
-}	
-
 
 // While waiting for a capture event on CCP1 it updates the upper 16 bits of our 32 bit
 // clock by incrementing counter on each overflow of the Timer1 clock
@@ -276,18 +109,18 @@ void PhotogateStatusCheck(void)
 
 // Times falling edges on either CCP1 using Timer1 or CCP2 using Timer 3
 // Copyright (C) 2007   Michael Coombes
+// wanted to make use of these functions but finding the existing structure 
+// not conducive to cooperative multitasking. 
 void Time_FallingEdges_1Gate(void)
 {
     unsigned char gate_to_use = '1'; // default is gate 1
     char string[4];                                        // string to get numbers
     unsigned int i=0, number_edges_to_time = 0, current_edge_time = 0, rollover_n = 0;
  
-    while (!DataRdyUSART());              // wait until there is a byte to read
-    getsUSART(string,3);                  // read a single character from buffer
     number_edges_to_time = atoi(string);  // Warning - function quits at first non-appropriate symbol
 
-    while (!DataRdyUSART());              // wait until there is a byte to read
-    gate_to_use = getcUSART();            // using this variable to keep track of photogate to use
+    // not going to get configuration from usart!
+    // here will use default gate 1
 
   
     counter = 0;           // reset 
@@ -296,11 +129,11 @@ void Time_FallingEdges_1Gate(void)
     {
         // configure Timer1 for capture mode at 8*TOSC = 1 microsec.
         OpenTimer1(TIMER_INT_OFF & T1_16BIT_RW & T1_SOURCE_INT & T1_PS_1_8 & T1_CCP1_T3_CCP2);
-        WriteTimer1(0);
+        WriteTimer1(0);  // thinking of having having timers running always
         PIR1bits.TMR1IF = 0;
-        OpenCapture1(C1_EVERY_FALL_EDGE & CAPTURE_INT_OFF);
-        while(i<number_edges_to_time)
-        {
+        OpenCapture1(C1_EVERY_FALL_EDGE & CAPTURE_INT_OFF); // ma move this to different function
+        while(i<number_edges_to_time) // not conducive to multi-tasking
+        {                             // will restructure to work as state machine
             rollover_n = C1_Increment_Counter_on_Timer1_Rollover(); 
             current_edge_time = ReadCapture1();  
             if (!CANCEL)
@@ -348,7 +181,7 @@ void Time_FallingEdges_1Gate(void)
         CloseTimer3();
     }
 
-    ResetUSART();
+    // ResetUSART();
 }     
 
 // Times falling edges on both CCP1 and CCP2  using Timer1 
@@ -687,5 +520,3 @@ void integer_bytes_to_USART(unsigned int i, unsigned int j)
     WriteUSART((char)value.lower_byte);
 
 }
-
-

@@ -4,14 +4,24 @@
     <memory name="program">
       <units>bytes</units>
       <length>49152</length>
+<<<<<<< HEAD
       <used>634</used>
       <free>48518</free>
+=======
+      <used>1158</used>
+      <free>47994</free>
+>>>>>>> 3962c9e... renamed main file and removed old unused functions
     </memory>
     <memory name="data">
       <units>bytes</units>
       <length>3968</length>
+<<<<<<< HEAD
       <used>27</used>
       <free>3941</free>
+=======
+      <used>152</used>
+      <free>3816</free>
+>>>>>>> 3962c9e... renamed main file and removed old unused functions
     </memory>
   </executable>
 </project>
