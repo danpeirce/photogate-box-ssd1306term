@@ -44,6 +44,16 @@ union two_bytes
     };  
 };
 
+union four_bytes
+{
+    unsigned long a_long;
+    struct
+    {
+        unsigned lower_int;
+        unsigned upper_int;
+    };
+};
+
 #pragma config WDT = OFF
 // initial testing done without external oscillator
 //#pragma config OSC = EC   // using an external clock (oscillator connected to pin 9 of PIC18F2620)
@@ -110,14 +120,27 @@ void main(void)
         {    
             sendTime(listTmr);
             indexTmr = 0;
+            timerCountOvrF = 0;
         }
     } 
 }
 
 void sendTime(unsigned int *listTmr)
 {
-    //work on this next
-   // inIndexBuff = inIndexBuff + sprintf( buffer+inIndexBuff, "%s%u%u%u%u\n", code, countpresses);
+    union four_bytes valone, valtwo, result;
+    
+    valtwo.upper_int = listTmr[3];
+    valtwo.lower_int = listTmr[2];
+    valone.upper_int = listTmr[1];
+    valone.lower_int = listTmr[0];
+    result.a_long = valtwo.a_long - valone.a_long;
+    if (result.a_long < 1000000 ) inIndexBuff = inIndexBuff + sprintf( buffer+inIndexBuff, "%s%lu us\n", code, result.a_long);
+    else
+    {
+        float resultfloat;
+        resultfloat = result.a_long / 1000000.0;
+        inIndexBuff = inIndexBuff + sprintf( buffer+inIndexBuff, "%s%f s\n", code, resultfloat);
+    }
 }
 
 // only used when using internal oscillator for initial testing
