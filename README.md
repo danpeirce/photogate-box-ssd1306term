@@ -1,6 +1,6 @@
 # Photogate Box
 
-This branch (swtchpresscount) counts the number of times a button switch has been pressed.
+This branch (timeswitch) displays the time between two falling edges on CCP1 (pin 17 of PIC184525).
 
   *needs new photo*
 
@@ -11,11 +11,7 @@ and a SSD1306 display terminal. Notes on the display terminal are available at
 
 Notes specific for this branch are at:
 
-* [https://danpeirce.github.io/2018/oled-v1.2/oled-v1.2.html#keypress](https://danpeirce.github.io/2018/oled-v1.2/oled-v1.2.html#keypress)
-
-![](https://danpeirce.github.io/2018/oled-v1.2/justcount.jpg)
-
-**The process if changing the code is only just beginning (as of June 24, 2018).**
+* [https://danpeirce.github.io/2018/oled-v1.2/oled-v1.2.html#timeswitch](https://danpeirce.github.io/2018/oled-v1.2/oled-v1.2.html#timeswitch)
 
 The Photogate box includes a microcontroller with built-in hardware timers.
 
