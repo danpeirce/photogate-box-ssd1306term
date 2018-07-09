@@ -2,7 +2,9 @@
 
 This branch (timeswitch) displays the time between two falling edges on CCP1 (pin 17 of PIC184525).
 
-  *needs new photo*
+![](image/timeswitchsec.jpg)
+
+This is still at the testing stage and built on a breadboard.
 
 The photogate ~~Box~~ *timer* is intended to act as a photogate timer with a display. This is a work in progress and
 considerable modification of old projects will be necessary for the new user interface which will now be switches 
@@ -23,7 +25,7 @@ so this initial testing is being done with the internal oscillator.
 
 For now work is being done on a breadboard.
 
-![](https://danpeirce.github.io/2018/oled-v1.2/justcountcct.jpg)
+![](image/timeswitchcct.jpg)
 
 The prototype from 2014 looked like this and had a USB interface and no display.
 
