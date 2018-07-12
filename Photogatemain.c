@@ -56,8 +56,8 @@ union four_bytes
 
 #pragma config WDT = OFF
 // initial testing done without external oscillator
-//#pragma config OSC = EC   // using an external clock (oscillator connected to pin 9 of PIC18F2620)
-#pragma config OSC = INTIO67  // allows osc1 (pin 13) and osc2 (pin 14) to be used as inputs
+#pragma config OSC = EC   // using an external clock (oscillator connected to pin 9 of PIC18F2620)
+//#pragma config OSC = INTIO67  // allows osc1 (pin 13) and osc2 (pin 14) to be used as inputs
                               // note there is a crystal attached to these pins on the 
                               // brainboard
 #pragma config MCLRE = OFF
@@ -65,7 +65,7 @@ union four_bytes
 #pragma config PBADEN = OFF      // PORTB<4:0> are digital IO 
 #pragma config CCP2MX = PORTBE   // switch CCP2 from RC1 to RB3
 
-void set_osc_32MHz(void);
+// void set_osc_32MHz(void);
 void txbuffertask(void);
 void sendTime(unsigned int *listTmr);
 
@@ -91,7 +91,7 @@ static char code[] = { SHIFTOUT, 'w', '2', 0 };
 //*********************************************************************************
 void main(void)
 {
-    set_osc_32MHz(); // only used when using internal oscillator fir initial 
+    // set_osc_32MHz(); // only used when using internal oscillator fir initial 
                      // testing
     char gate_mode = 0;
     Delay10KTCYx(20); 
@@ -143,7 +143,7 @@ void sendTime(unsigned int *listTmr)
     }
 }
 
-// only used when using internal oscillator for initial testing
+/* // only used when using internal oscillator for initial testing
 void set_osc_32MHz(void)
 {
   int i;
@@ -159,7 +159,7 @@ void set_osc_32MHz(void)
       
 }
 
-
+*/
 
 void txbuffertask(void)
 {
