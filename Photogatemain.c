@@ -2,9 +2,6 @@
 PhotogateLV.c Target PIC18F4525 Controls the PIC MCU as a two photogate timer.
 	extensive rewrite for new project (started in 2018). 
 	Copyright (C) 2018   Dan Peirce B.Sc.
-	
-	main() is being essentially completely rewritten as new program requires
-	        pushbutton switch input rather than serial input
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -34,16 +31,6 @@ This program is written for a PIC18F4525 chip
 #include <stdio.h>     
 
 
-union two_bytes
-{
-    unsigned int an_integer;
-    struct
-    {
-        unsigned lower_byte:8;
-        unsigned upper_byte:8;
-    };  
-};
-
 union four_bytes
 {
     unsigned long a_long;
@@ -55,17 +42,14 @@ union four_bytes
 };
 
 #pragma config WDT = OFF
-// initial testing done without external oscillator
+
 #pragma config OSC = EC   // using an external clock (oscillator connected to pin 9 of PIC18F2620)
-//#pragma config OSC = INTIO67  // allows osc1 (pin 13) and osc2 (pin 14) to be used as inputs
-                              // note there is a crystal attached to these pins on the 
-                              // brainboard
+
 #pragma config MCLRE = OFF
 #pragma config LVP = OFF
 #pragma config PBADEN = OFF      // PORTB<4:0> are digital IO 
 #pragma config CCP2MX = PORTBE   // switch CCP2 from RC1 to RB3
 
-// void set_osc_32MHz(void);
 void txbuffertask(void);
 void sendTime(unsigned int *listTmr);
 
@@ -91,8 +75,6 @@ static char code[] = { SHIFTOUT, 'w', '2', 0 };
 //*********************************************************************************
 void main(void)
 {
-    // set_osc_32MHz(); // only used when using internal oscillator fir initial 
-                     // testing
     char gate_mode = 0;
     Delay10KTCYx(20); 
   
@@ -142,24 +124,6 @@ void sendTime(unsigned int *listTmr)
         inIndexBuff = inIndexBuff + sprintf( buffer+inIndexBuff, "%s%f s\n", code, resultfloat);
     }
 }
-
-/* // only used when using internal oscillator for initial testing
-void set_osc_32MHz(void)
-{
-  int i;
- 
-  OSCCONbits.IRCF2 = 1;     // Set the OSCILLATOR Control Register to 8 MHz
-  OSCCONbits.IRCF1 = 1;      
-  OSCCONbits.IRCF0 = 1;     
- 
-  OSCTUNEbits.PLLEN = 1;    // Enable PLL, boost by 4 -> 32 MHz
-
-  for(i=0;i<500;i++);       // delay to allow clock PLL to lock (stabilize)
-
-      
-}
-
-*/
 
 void txbuffertask(void)
 {
