@@ -41,6 +41,22 @@ union four_bytes
     };
 };
 
+union flags
+{
+    unsigned char a_byte;
+    struct
+    {
+        unsigned bit0:1;
+        unsigned bit1:1;
+        unsigned bit2:1;
+        unsigned bit3:1;
+        unsigned bit4:1;
+        unsigned bit5:1;
+        unsigned bit6:1;
+        unsigned bit7:1;
+    };
+};
+
 #pragma config WDT = OFF
 
 #pragma config OSC = EC   // using an external clock (oscillator connected to pin 9 of PIC18F2620)
@@ -69,6 +85,8 @@ char buffer[100];
 char outIndexBuff = 0; 
 char inIndexBuff = 0;
 static char code[] = { SHIFTOUT, 'w', '2', 0 };
+union flags debounceSW;
+union flags inputSW;
 
 //*********************************************************************************
 //                               main
@@ -79,25 +97,60 @@ void main(void)
     Delay10KTCYx(20); 
   
     initialization();
- 
+    debounceSW.a_byte = 0;
+    inputSW.a_byte = 0;
+    
     while(1)
     { 
         static unsigned int listTmr[] = {0,0,0,0,0,0};
         static unsigned int indexTmr = 0;
+        static unsigned int cyclecount = 0;
+        
         if(TXIF && (inIndexBuff > 0)) txbuffertask();
         if (PIR1bits.TMR1IF) // Timer1 clock has overflowed
         {
             PIR1bits.TMR1IF = 0; // reset Timer1 clock interrupt flag
             timerCountOvrF++;
         }
-        if (PIR1bits.CCP1IF)
+        inputSW.bit0 = PORTDbits.RD2;
+        if (!debounceSW.bit0)
+        {
+            if (!inputSW.bit0 && (cyclecount>2)) cyclecount--;
+            if (inputSW.bit0) 
+            {
+                cyclecount++;
+                if (cyclecount == 1)
+                {
+                    listTmr[indexTmr] = ReadTimer1();
+                    indexTmr++;
+                    listTmr[indexTmr] = timerCountOvrF;
+                    indexTmr++;
+                }
+            }
+            if (cyclecount > 100)
+            {
+                cyclecount = 0;
+                debounceSW.bit0 = 1;
+            }
+        }
+        else
+        {
+            if (inputSW.bit0 && (cyclecount>2)) cyclecount--;
+            if (!inputSW.bit0) cyclecount++;
+            if (cyclecount > 100) 
+            {
+                cyclecount = 0;
+                debounceSW.bit0 =0;
+            }
+        }
+        /* if (PIR1bits.CCP1IF)
         {
             listTmr[indexTmr] = ReadCapture1();
             indexTmr++;
             listTmr[indexTmr] = timerCountOvrF;
             indexTmr++;
             PIR1bits.CCP1IF = 0; //clear flag for next event
-        }
+        } */
         if (indexTmr == 4) 
         {    
             sendTime(listTmr);
