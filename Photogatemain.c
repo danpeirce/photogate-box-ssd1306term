@@ -68,6 +68,7 @@ union flags
 
 void txbuffertask(void);
 void sendTime(unsigned int *listTmr);
+void running(void);
 
 
 
@@ -125,6 +126,7 @@ void main(void)
                     indexTmr++;
                     listTmr[indexTmr] = timerCountOvrF;
                     indexTmr++;
+                    running();
                 }
             }
             if (cyclecount > 100)
@@ -170,12 +172,23 @@ void sendTime(unsigned int *listTmr)
     valone.lower_int = listTmr[0];
     result.a_long = valtwo.a_long - valone.a_long;
     if (result.a_long < 1000000 ) inIndexBuff = inIndexBuff + sprintf( buffer+inIndexBuff, "%s%lu us\n", code, result.a_long);
-    else
+    else if (result.a_long < 10000000ul )
     {
         float resultfloat;
         resultfloat = result.a_long / 1000000.0;
         inIndexBuff = inIndexBuff + sprintf( buffer+inIndexBuff, "%s%f s\n", code, resultfloat);
     }
+    else
+    {
+        float resultfloat;
+        resultfloat = result.a_long /1000000.0;
+        inIndexBuff = inIndexBuff + sprintf( buffer+inIndexBuff, "%s%.3f s\n", code, resultfloat);
+    }
+}
+
+void running(void)
+{
+    inIndexBuff = inIndexBuff + sprintf( buffer+inIndexBuff, "%s- - -\n", code);
 }
 
 void txbuffertask(void)
