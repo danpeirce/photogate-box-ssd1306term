@@ -69,6 +69,7 @@ union flags
 void txbuffertask(void);
 void sendTime(unsigned int *listTmr);
 void running(void);
+void StopwatchMsg(void);
 
 
 
@@ -76,18 +77,26 @@ void running(void);
 #define REVERT 'r'
 
 void initialization(void);
+void defaultS(void);
+void stopwatchS(void);
 
 unsigned int timerCountOvrF = 0; // used to count Timer1 or Timer3 overflows and thus acts as the 
                                 // upper 16 bits of a 32 bit timer
 
 long count = 0;
+void (*stateMtasks)(void) = defaultS;
 
 char buffer[100];
 char outIndexBuff = 0; 
 char inIndexBuff = 0;
 static char code[] = { SHIFTOUT, 'w', '2', 0 };
+static char code1[] = { SHIFTOUT, 'w', '1', 0 };
 union flags debounceSW;
 union flags inputSW;
+
+unsigned int listTmr[] = {0,0,0,0,0,0};
+unsigned int indexTmr = 0;
+unsigned int cyclecount = 0;
 
 //*********************************************************************************
 //                               main
@@ -103,16 +112,39 @@ void main(void)
     
     while(1)
     { 
-        static unsigned int listTmr[] = {0,0,0,0,0,0};
-        static unsigned int indexTmr = 0;
-        static unsigned int cyclecount = 0;
-        
+              
         if(TXIF && (inIndexBuff > 0)) txbuffertask();
         if (PIR1bits.TMR1IF) // Timer1 clock has overflowed
         {
             PIR1bits.TMR1IF = 0; // reset Timer1 clock interrupt flag
             timerCountOvrF++;
         }
+        stateMtasks();
+        /* if (PIR1bits.CCP1IF)
+        {
+            listTmr[indexTmr] = ReadCapture1();
+            indexTmr++;
+            listTmr[indexTmr] = timerCountOvrF;
+            indexTmr++;
+            PIR1bits.CCP1IF = 0; //clear flag for next event
+        } */
+        if (indexTmr == 4) 
+        {    
+            sendTime(listTmr);
+            indexTmr = 0;
+            timerCountOvrF = 0;
+        }
+    } 
+}
+
+void defaultS(void)
+{
+    StopwatchMsg();
+    stateMtasks = stopwatchS;
+}
+
+void stopwatchS(void)
+{
         inputSW.bit0 = PORTDbits.RD2;
         if (!debounceSW.bit0)
         {
@@ -145,21 +177,6 @@ void main(void)
                 debounceSW.bit0 =0;
             }
         }
-        /* if (PIR1bits.CCP1IF)
-        {
-            listTmr[indexTmr] = ReadCapture1();
-            indexTmr++;
-            listTmr[indexTmr] = timerCountOvrF;
-            indexTmr++;
-            PIR1bits.CCP1IF = 0; //clear flag for next event
-        } */
-        if (indexTmr == 4) 
-        {    
-            sendTime(listTmr);
-            indexTmr = 0;
-            timerCountOvrF = 0;
-        }
-    } 
 }
 
 void sendTime(unsigned int *listTmr)
@@ -189,6 +206,11 @@ void sendTime(unsigned int *listTmr)
 void running(void)
 {
     inIndexBuff = inIndexBuff + sprintf( buffer+inIndexBuff, "%s- - -\n", code);
+}
+
+void StopwatchMsg(void)
+{
+    inIndexBuff = inIndexBuff + sprintf( buffer+inIndexBuff, "%sStopwatch\n", code1);
 }
 
 void txbuffertask(void)
