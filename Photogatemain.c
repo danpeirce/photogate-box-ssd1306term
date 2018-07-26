@@ -1,5 +1,5 @@
 /*********************************************************************************************
-PhotogateLV.c Target PIC18F4525 Controls the PIC MCU as a two photogate timer.
+Photogatemain.c Target PIC18F4525 Controls the PIC MCU as a two photogate timer.
 	extensive rewrite for new project (started in 2018). 
 	Copyright (C) 2018   Dan Peirce B.Sc.
 

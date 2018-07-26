@@ -25,6 +25,18 @@ The code now works like a terminal.
 #include <Fonts/FreeSerif9pt7b.h>
 
 #define OLED_RESET 4
+#define W1L1X1 5
+#define W1L1Y1 0
+#define W1L1X2 95
+#define W1L1Y2 0
+
+#define W1L2X1 5
+#define W1L2Y1 42
+#define W1L2X2 95
+#define W1L2Y2 42
+//   display.drawLine(5, 0, 95, 0, WHITE);
+//   display.drawLine(5, 42, 95, 42, WHITE); 
+
 
 void defaultState();
 void shiftoutS();
@@ -44,6 +56,7 @@ void showPhotogateTimer();
 void showTictactoe();
 void showLabels();
 void deleteXO(uint16_t xpnt, uint16_t ypnt);
+void window1(void);
 void window2(void);
 
 Adafruit_SSD1306 display(OLED_RESET);
@@ -219,16 +232,24 @@ void windowS()
     {
           // read the incoming byte:
           incomingByte = Serial.read();
-          if      ( incomingByte == '2') window2();                            
+          if      ( incomingByte == '2') window2();             
+          if      ( incomingByte == '1') window1();		  
           statePnt = defaultState;
     }  
+}
+  
+void window1(void)
+{
+  display.fillRect(W1L1X1, W1L1Y1+1, W1L1X2-W1L1X1, W1L2Y1-W1L1Y1-2, BLACK); // clear window1
+  //display.display();
+  display.setCursor(W1L2X1+1,W1L2Y1-7);
 }
 
 void window2(void)
 {
-  display.fillRect(5, 43, 96, 22, BLACK); // clear window2
+  display.fillRect(W1L2X1, W1L2Y1+1, 96, 22, BLACK); // clear window2
   //display.display();
-  display.setCursor(6,57);
+  display.setCursor(W1L2X1+1,57);
 }
 
 void tttoeS()
@@ -437,7 +458,6 @@ void yposS()
     }  
 }
 
-
 void showPHYS1600()
 {
   display.setRotation(1);
@@ -449,8 +469,8 @@ void showPHYS1600()
   display.setRotation(0);
   display.setCursor(8,18);
   display.println(F("PHYS1600"));
-  display.drawLine(5, 0, 95, 0, WHITE);
-  display.drawLine(5, 42, 95, 42, WHITE);
+  display.drawLine(W1L1X1, W1L1Y1, W1L1X2, W1L1Y2, WHITE);
+  display.drawLine(W1L2X1, W1L2Y1, W1L2X2, W1L2Y2, WHITE);
   display.setCursor(20,35);
   display.println(F("  PMT"));  
   display.display();
@@ -509,8 +529,8 @@ void showPhotogateTimer()
   display.println(F("Photogate"));
   display.setCursor(20,35);
   display.println(F("Timer"));
-  display.drawLine(5, 0, 95, 0, WHITE);
-  display.drawLine(5, 42, 95, 42, WHITE);  
+  display.drawLine(W1L1X1, W1L1Y1, W1L1X2, W1L1Y2, WHITE);
+  display.drawLine(W1L2X1, W1L2Y1, W1L2X2, W1L2Y2, WHITE); 
   display.display();
 }
 
