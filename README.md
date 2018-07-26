@@ -1,6 +1,6 @@
 # Photogate Box
 
-This branch (stopwatch) displays the time between two button presses on RD2.
+ *This branch (pickmode) is in early stages.*
 
 ![](image/timeswitchsec.jpg)
 
