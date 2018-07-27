@@ -70,8 +70,8 @@ void txbuffertask(void);
 void sendTime(unsigned int *listTmr);
 void running(void);
 void StopwatchMsg(void);
-
-
+void photogateMsg(void);
+void PhotogateScr(void);
 
 #define SHIFTOUT 0x0E
 #define REVERT 'r'
@@ -79,6 +79,8 @@ void StopwatchMsg(void);
 void initialization(void);
 void defaultS(void);
 void stopwatchS(void);
+void photogateM1S(void);
+void modesS(void);
 
 unsigned int timerCountOvrF = 0; // used to count Timer1 or Timer3 overflows and thus acts as the 
                                 // upper 16 bits of a 32 bit timer
@@ -91,6 +93,9 @@ char outIndexBuff = 0;
 char inIndexBuff = 0;
 static char code[] = { SHIFTOUT, 'w', '2', 0 };
 static char code1[] = { SHIFTOUT, 'w', '1', 0 };
+static char codeP[] = { SHIFTOUT, 'p',  0 };
+static char codeC[] = { 0x0C, 0 };
+
 union flags debounceSW;
 union flags inputSW;
 
@@ -120,14 +125,7 @@ void main(void)
             timerCountOvrF++;
         }
         stateMtasks();
-        /* if (PIR1bits.CCP1IF)
-        {
-            listTmr[indexTmr] = ReadCapture1();
-            indexTmr++;
-            listTmr[indexTmr] = timerCountOvrF;
-            indexTmr++;
-            PIR1bits.CCP1IF = 0; //clear flag for next event
-        } */
+
         if (indexTmr == 4) 
         {    
             sendTime(listTmr);
@@ -139,44 +137,93 @@ void main(void)
 
 void defaultS(void)
 {
+    listTmr[0] = timerCountOvrF;
+    listTmr[1] = 0;
     StopwatchMsg();
-    stateMtasks = stopwatchS;
+    stateMtasks = modesS;
+}
+
+void modesS(void)
+{
+    if ((timerCountOvrF - listTmr[0]) > 14u ) 
+    {
+        listTmr[0] = timerCountOvrF;
+        if (listTmr[1] == 0u )
+        {
+            listTmr[1] = 1;
+            StopwatchMsg();
+        }
+        else if (listTmr[1] == 1u )
+        {
+            listTmr[1] = 0;
+            photogateMsg();
+            
+        }
+    }
+    if (PORTDbits.RD2)
+    {
+        if (listTmr[1] == 0u) 
+        {
+            stateMtasks = photogateM1S ;
+            PhotogateScr();
+            PIR1bits.CCP1IF = 0; //clear flag for next event
+            indexTmr = 0;
+            timerCountOvrF = 0;
+        }    
+        else if (listTmr[1] == 1u) 
+        {
+            stateMtasks = stopwatchS ;
+            
+        }
+    }
+}
+
+void photogateM1S(void)
+{
+    if (PIR1bits.CCP1IF)
+    {
+        listTmr[indexTmr] = ReadCapture1();
+        indexTmr++;
+        listTmr[indexTmr] = timerCountOvrF;
+        indexTmr++;
+        PIR1bits.CCP1IF = 0; //clear flag for next event
+    } 
 }
 
 void stopwatchS(void)
 {
-        inputSW.bit0 = PORTDbits.RD2;
-        if (!debounceSW.bit0)
+    inputSW.bit0 = PORTDbits.RD2;
+    if (!debounceSW.bit0)
+    {
+        if (!inputSW.bit0 && (cyclecount>2)) cyclecount--;
+        if (inputSW.bit0) 
         {
-            if (!inputSW.bit0 && (cyclecount>2)) cyclecount--;
-            if (inputSW.bit0) 
+            cyclecount++;
+            if (cyclecount == 1)
             {
-                cyclecount++;
-                if (cyclecount == 1)
-                {
-                    listTmr[indexTmr] = ReadTimer1();
-                    indexTmr++;
-                    listTmr[indexTmr] = timerCountOvrF;
-                    indexTmr++;
-                    running();
-                }
-            }
-            if (cyclecount > 100)
-            {
-                cyclecount = 0;
-                debounceSW.bit0 = 1;
+                listTmr[indexTmr] = ReadTimer1();
+                indexTmr++;
+                listTmr[indexTmr] = timerCountOvrF;
+                indexTmr++;
+                running();
             }
         }
-        else
+        if (cyclecount > 10) // little or no bounce on rising edge
         {
-            if (inputSW.bit0 && (cyclecount>2)) cyclecount--;
-            if (!inputSW.bit0) cyclecount++;
-            if (cyclecount > 100) 
-            {
-                cyclecount = 0;
-                debounceSW.bit0 =0;
-            }
+            cyclecount = 0;
+            debounceSW.bit0 = 1;
         }
+    }
+    else
+    {
+        if (inputSW.bit0 && (cyclecount>2)) cyclecount--;
+        if (!inputSW.bit0) cyclecount++;
+        if (cyclecount > 100) 
+        {
+            cyclecount = 0;
+            debounceSW.bit0 =0;
+        }
+    }
 }
 
 void sendTime(unsigned int *listTmr)
@@ -210,7 +257,17 @@ void running(void)
 
 void StopwatchMsg(void)
 {
-    inIndexBuff = inIndexBuff + sprintf( buffer+inIndexBuff, "%sStopwatch\n", code1);
+    inIndexBuff = inIndexBuff + sprintf( buffer+inIndexBuff, "%s%sStopwatch\n", codeC, code1);
+}
+
+void PhotogateScr(void)
+{
+    inIndexBuff = inIndexBuff + sprintf( buffer+inIndexBuff, "%s%s\n", codeC,codeP);
+}
+
+void photogateMsg(void)
+{
+    inIndexBuff = inIndexBuff + sprintf( buffer+inIndexBuff, "%sPhotogate\n", code1);
 }
 
 void txbuffertask(void)
