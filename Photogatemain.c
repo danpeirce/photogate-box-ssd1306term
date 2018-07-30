@@ -72,6 +72,7 @@ void running(void);
 void StopwatchMsg(void);
 void photogateMsg(void);
 void PhotogateScr(void);
+void clearW2(void);
 
 #define SHIFTOUT 0x0E
 #define REVERT 'r'
@@ -124,6 +125,8 @@ void main(void)
             PIR1bits.TMR1IF = 0; // reset Timer1 clock interrupt flag
             timerCountOvrF++;
         }
+        inputSW.bit0 = PORTDbits.RD2;
+        inputSW.bit1 = PORTDbits.RD3;
         stateMtasks();
 
         if (indexTmr == 4) 
@@ -139,6 +142,7 @@ void defaultS(void)
 {
     listTmr[0] = timerCountOvrF;
     listTmr[1] = 0;
+    clearW2();
     StopwatchMsg();
     stateMtasks = modesS;
 }
@@ -159,7 +163,7 @@ void modesS(void)
             photogateMsg();
         }
     }
-    if (PORTDbits.RD2)
+    if (inputSW.bit0)
     {
         if (listTmr[1] == 0u) 
         {
@@ -190,11 +194,11 @@ void photogateM1S(void)
         indexTmr++;
         PIR1bits.CCP1IF = 0; //clear flag for next event
     } 
+    if (inputSW.bit1) stateMtasks = defaultS;
 }
 
 void stopwatchS(void)
 {
-    inputSW.bit0 = PORTDbits.RD2;
     if (!debounceSW.bit0)
     {
         if (!inputSW.bit0 && (cyclecount>2)) cyclecount--;
@@ -226,6 +230,7 @@ void stopwatchS(void)
             debounceSW.bit0 =0;
         }
     }
+    if (inputSW.bit1) stateMtasks = defaultS;
 }
 
 void sendTime(unsigned int *listTmr)
@@ -273,6 +278,11 @@ void photogateMsg(void)
     inIndexBuff = inIndexBuff + sprintf( buffer+inIndexBuff, "%s2. Photogate \n", code1);
 }
 
+void clearW2(void)
+{
+    inIndexBuff = inIndexBuff + sprintf( buffer+inIndexBuff, "%s", code);
+}
+
 void txbuffertask(void)
 {
     TXREG = buffer[outIndexBuff];
@@ -316,6 +326,7 @@ void initialization(void)
 	
 	TRISD = 0;  // for PIC18F4525 only
 	TRISDbits.TRISD2 = 1;     // pushbutton switch on pin18f4525 -- will change port for pic18f2620 
+    TRISDbits.TRISD3 = 1;     // pushbutton switch on pin18f4525 -- will change port for pic18f2620 
 
     OpenUSART( USART_TX_INT_OFF & USART_RX_INT_OFF & USART_ASYNCH_MODE & USART_EIGHT_BIT & 
              USART_CONT_RX & USART_BRGH_HIGH, 16 );   
