@@ -233,14 +233,14 @@ void windowS()
           // read the incoming byte:
           incomingByte = Serial.read();
           if      ( incomingByte == '2') window2();             
-          if      ( incomingByte == '1') window1();		  
+          if      ( incomingByte == '1') window1();      
           statePnt = defaultState;
     }  
 }
   
 void window1(void)
 {
-  display.fillRect(W1L1X1, W1L1Y1+1, W1L1X2-W1L1X1, W1L2Y1-W1L1Y1-2, BLACK); // clear window1
+  display.fillRect(W1L1X1, W1L1Y1+1, W1L1X2-W1L1X1+8, W1L2Y1-W1L1Y1-2, BLACK); // clear window1
   //display.display();
   display.setCursor(W1L2X1+1,W1L2Y1-7);
 }

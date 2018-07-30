@@ -88,7 +88,7 @@ unsigned int timerCountOvrF = 0; // used to count Timer1 or Timer3 overflows and
 long count = 0;
 void (*stateMtasks)(void) = defaultS;
 
-char buffer[100];
+char buffer[124];
 char outIndexBuff = 0; 
 char inIndexBuff = 0;
 static char code[] = { SHIFTOUT, 'w', '2', 0 };
@@ -157,7 +157,6 @@ void modesS(void)
         {
             listTmr[1] = 0;
             photogateMsg();
-            
         }
     }
     if (PORTDbits.RD2)
@@ -169,11 +168,14 @@ void modesS(void)
             PIR1bits.CCP1IF = 0; //clear flag for next event
             indexTmr = 0;
             timerCountOvrF = 0;
+            listTmr[0] = 0;
+            listTmr[1] = 0;
         }    
         else if (listTmr[1] == 1u) 
         {
             stateMtasks = stopwatchS ;
-            
+            indexTmr = 0;
+            timerCountOvrF = 0;
         }
     }
 }
@@ -257,7 +259,8 @@ void running(void)
 
 void StopwatchMsg(void)
 {
-    inIndexBuff = inIndexBuff + sprintf( buffer+inIndexBuff, "%s%sStopwatch\n", codeC, code1);
+ //   inIndexBuff = inIndexBuff + sprintf( buffer+inIndexBuff, "%s%s1. Stopwatch \n", codeC, code1);
+    inIndexBuff = inIndexBuff + sprintf( buffer+inIndexBuff, "%s1. Stopwatch \n", code1);
 }
 
 void PhotogateScr(void)
@@ -267,7 +270,7 @@ void PhotogateScr(void)
 
 void photogateMsg(void)
 {
-    inIndexBuff = inIndexBuff + sprintf( buffer+inIndexBuff, "%sPhotogate\n", code1);
+    inIndexBuff = inIndexBuff + sprintf( buffer+inIndexBuff, "%s2. Photogate \n", code1);
 }
 
 void txbuffertask(void)

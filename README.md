@@ -1,6 +1,6 @@
 # Photogate Box
 
- *This branch (pickmode) is in early stages.*
+ *The firmware is still in development.*
 
 ![](image/timeswitchsec.jpg)
 
