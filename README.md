@@ -1,6 +1,36 @@
 # Photogate Box
 
  *The firmware is still in development.*
+ 
+## pickmode (master)
+
+The pickmode branch allows selection of different operating modes. As of today (August 1, 2018) there are 
+three operating modes.
+
+1. Stopwatch
+2. Photogate
+3. Pendulum
+
+When the timer box is powered up window 1 of the display will cycle displaying possible mode selections in a repeating 
+sequence. The **mode select** button allows one to select the mode.  
+
+### Stopwatch mode
+
+When the Stopwatch mode is selected the **mode select** button becomes the Start/Stop button.
+During timing window 2 of the display shows **- - -*.
+When timing is stopped the time will be displayed in window 2. Time is reset automatically if/when the Start/Stop 
+button is pressed again.
+The Mode Reset button will restart the timer with window 1 cycling the available modes.
+
+### Photogate
+
+The Photogate mode will time the duration between negative going edges on the photogate1 input.
+
+### Pendulum
+
+The Pendulum mode is similar to Photogate mode but is displays the total period of a swinging pendulum.
+
+## breadbaord
 
 ![](image/timeswitchsec.jpg)
 
