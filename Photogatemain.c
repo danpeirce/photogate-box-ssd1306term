@@ -71,6 +71,7 @@ void sendTime(unsigned int *listTmr);
 void running(void);
 void StopwatchMsg(void);
 void photogateMsg(void);
+void pendulumMsg(void);
 void PhotogateScr(void);
 void clearW2(void);
 
@@ -81,6 +82,7 @@ void initialization(void);
 void defaultS(void);
 void stopwatchS(void);
 void photogateM1S(void);
+void photogateM2S(void);
 void modesS(void);
 
 unsigned int timerCountOvrF = 0; // used to count Timer1 or Timer3 overflows and thus acts as the 
@@ -129,12 +131,7 @@ void main(void)
         inputSW.bit1 = PORTDbits.RD3;
         stateMtasks();
 
-        if (indexTmr == 4) 
-        {    
-            sendTime(listTmr);
-            indexTmr = 0;
-            timerCountOvrF = 0;
-        }
+
     } 
 }
 
@@ -152,7 +149,7 @@ void modesS(void)
     if ((timerCountOvrF - listTmr[0]) > 14u ) 
     {
         listTmr[0] = timerCountOvrF;
-        if (listTmr[1] == 0u )
+        if (listTmr[1] == 2u )
         {
             listTmr[1] = 1;
             StopwatchMsg();
@@ -161,6 +158,11 @@ void modesS(void)
         {
             listTmr[1] = 0;
             photogateMsg();
+        }
+        else if (listTmr[1] == 0u )
+        {
+            listTmr[1] = 2;
+            pendulumMsg();
         }
     }
     if (inputSW.bit0)
@@ -181,6 +183,16 @@ void modesS(void)
             indexTmr = 0;
             timerCountOvrF = 0;
         }
+        if (listTmr[1] == 2u) 
+        {
+            stateMtasks = photogateM2S ;
+          
+            PIR1bits.CCP1IF = 0; //clear flag for next event
+            indexTmr = 0;
+            timerCountOvrF = 0;
+            listTmr[0] = 0;
+            listTmr[1] = 0;
+        }
     }
 }
 
@@ -195,6 +207,35 @@ void photogateM1S(void)
         PIR1bits.CCP1IF = 0; //clear flag for next event
     } 
     if (inputSW.bit1) stateMtasks = defaultS;
+            
+    if (indexTmr == 4) 
+    {    
+        sendTime(listTmr);
+        indexTmr = 0;
+        timerCountOvrF = 0;
+    }
+}
+
+void photogateM2S(void)
+{
+    if (PIR1bits.CCP1IF)
+    {
+        listTmr[indexTmr] = ReadCapture1();
+        indexTmr++;
+        listTmr[indexTmr] = timerCountOvrF;
+        indexTmr++;
+        PIR1bits.CCP1IF = 0; //clear flag for next event
+    } 
+    if (inputSW.bit1) stateMtasks = defaultS;
+            
+    if (indexTmr == 6) 
+    {    
+        listTmr[2] = listTmr[4]; // move relevant time point 
+        listTmr[3] = listTmr[5]; // in position for sendTime
+        sendTime(listTmr);
+        indexTmr = 0;
+        timerCountOvrF = 0;
+    }
 }
 
 void stopwatchS(void)
@@ -231,6 +272,12 @@ void stopwatchS(void)
         }
     }
     if (inputSW.bit1) stateMtasks = defaultS;
+    if (indexTmr == 4) 
+    {    
+        sendTime(listTmr);
+        indexTmr = 0;
+        timerCountOvrF = 0;
+    }
 }
 
 void sendTime(unsigned int *listTmr)
@@ -276,6 +323,11 @@ void PhotogateScr(void)
 void photogateMsg(void)
 {
     inIndexBuff = inIndexBuff + sprintf( buffer+inIndexBuff, "%s2. Photogate \n", code1);
+}
+
+void pendulumMsg(void)
+{
+    inIndexBuff = inIndexBuff + sprintf( buffer+inIndexBuff, "%s3. Pendulum \n", code1);
 }
 
 void clearW2(void)
