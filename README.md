@@ -17,22 +17,28 @@ sequence. The **mode select** button allows one to select the mode.
 ### Stopwatch mode
 
 When the Stopwatch mode is selected the **mode select** button becomes the Start/Stop button.
-During timing window 2 of the display shows **- - -*.
+During timing window 2 of the display shows **- - -**.
 When timing is stopped the time will be displayed in window 2. Time is reset automatically if/when the Start/Stop 
 button is pressed again.
 The Mode Reset button will restart the timer with window 1 cycling the available modes.
+
+![](image/stopwatch1.jpg)
 
 ### Photogate mode
 
 The Photogate mode will time the duration between negative going edges on the photogate1 input.
 
+![]()
+
 ### Pendulum mode
 
 The Pendulum mode is similar to Photogate mode but is displays the total period of a swinging pendulum.
 
-## breadbaord 
+![](image/pendulum3.jpg)
 
-![](image/timeswitchsec.jpg)
+## breadboard 
+
+![](image/pickmode2620cct.jpg)
 
 This is still at the testing stage and built on a breadboard.
 
@@ -45,8 +51,6 @@ The Photogate box includes a microcontroller with built-in hardware timers.
 This branch is for the PIC18F2620 MCU. This branch uses an external 32 Mhz oscillator.
 
 For now work is being done on a breadboard.
-
-* this image to be updated for PIC18F2620 *
 
 ![](image/timeswitchcct.jpg)
 
