@@ -22,15 +22,15 @@ When timing is stopped the time will be displayed in window 2. Time is reset aut
 button is pressed again.
 The Mode Reset button will restart the timer with window 1 cycling the available modes.
 
-### Photogate
+### Photogate mode
 
 The Photogate mode will time the duration between negative going edges on the photogate1 input.
 
-### Pendulum
+### Pendulum mode
 
 The Pendulum mode is similar to Photogate mode but is displays the total period of a swinging pendulum.
 
-## breadbaord
+## breadbaord 
 
 ![](image/timeswitchsec.jpg)
 
@@ -42,10 +42,11 @@ Notes specific for this branch are at:
 
 The Photogate box includes a microcontroller with built-in hardware timers.
 
-This branch is for the PIC18F4525 MCU rather than the PIC18F2620. Primarily because I happen to have a PIC18F4525 
-handy on a breadboard. It will make no difference to the final code. This branch  an external 32 Mhz oscillator.
+This branch is for the PIC18F2620 MCU. This branch uses an external 32 Mhz oscillator.
 
 For now work is being done on a breadboard.
+
+* this image to be updated for PIC18F2620 *
 
 ![](image/timeswitchcct.jpg)
 

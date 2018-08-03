@@ -1,5 +1,5 @@
 /*********************************************************************************************
-Photogatemain.c Target PIC18F4525 Controls the PIC MCU as a two photogate timer.
+Photogatemain.c Target PIC18F2620 Controls the PIC MCU as a two photogate timer.
 	extensive rewrite for new project (started in 2018). 
 	Copyright (C) 2018   Dan Peirce B.Sc.
 
@@ -17,8 +17,7 @@ Photogatemain.c Target PIC18F4525 Controls the PIC MCU as a two photogate timer.
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-This program is written for a PIC18F4525 chip
- * some of the old comments may have pin ref to PIC18F2620
+This program is written for a PIC18F2620 chip
 
 ***********************************************************************************************/
 
@@ -127,8 +126,8 @@ void main(void)
             PIR1bits.TMR1IF = 0; // reset Timer1 clock interrupt flag
             timerCountOvrF++;
         }
-        inputSW.bit0 = PORTDbits.RD2;
-        inputSW.bit1 = PORTDbits.RD3;
+        inputSW.bit0 = PORTCbits.RC3;
+        inputSW.bit1 = PORTCbits.RC4;
         stateMtasks();
 
 
@@ -351,11 +350,11 @@ void initialization(void)
 
     // Configure USART module
 
-	TRISCbits.TRISC7 = 1;     // and RX (RC7) as input
+	TRISCbits.TRISC7 = 1;     // and RX (RC7) as input so far is tied high
     TRISCbits.TRISC6 = 0;     // set TX (RC6) as output  
     TRISCbits.TRISC5 = 0;     // unused pin
-	TRISCbits.TRISC4 = 0;     // unused pin	
-	TRISCbits.TRISC3 = 0;     // unused pin	
+	TRISCbits.TRISC4 = 1;     // Mode reset switch	
+	TRISCbits.TRISC3 = 1;     // Mode/start/stop switch	
 	// Configure RC2/CCP1 and RB3/CCP2 as inputs
     // Photogate 1 is on RC2/CCP1/Pin 13 and 
     // Photogate 2 is on RB3/CCP2/Pin 24 
@@ -376,10 +375,6 @@ void initialization(void)
 
 	TRISA = 0; // none of the pins are used
 	
-	TRISD = 0;  // for PIC18F4525 only
-	TRISDbits.TRISD2 = 1;     // pushbutton switch on pin18f4525 -- will change port for pic18f2620 
-    TRISDbits.TRISD3 = 1;     // pushbutton switch on pin18f4525 -- will change port for pic18f2620 
-
     OpenUSART( USART_TX_INT_OFF & USART_RX_INT_OFF & USART_ASYNCH_MODE & USART_EIGHT_BIT & 
              USART_CONT_RX & USART_BRGH_HIGH, 16 );   
           // baud rate is 2 000 000 / (SPBRG+1)
