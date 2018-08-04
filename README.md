@@ -1,10 +1,14 @@
 # Photogate Box
 
+The photogate box will contain two interconnected circuits. The display terminal circuit is shown here.
+
 ![](image/terminal-in-box.jpg)
 
 ![](image/terminal-front.jpg)
 
 ![](image/terminal-back.jpg)
+
+The timing circuit will be added to the box soon. The PIC18F2620 is part of the timing circuit.
 
  *The firmware is still in development.*
  
@@ -50,7 +54,7 @@ This is still at the testing stage and built on a breadboard.
 
 Notes specific for this branch are at:
 
-* [https://danpeirce.github.io/2018/oled-v1.2/oled-v1.2.html#stopwatch](https://danpeirce.github.io/2018/oled-v1.2/oled-v1.2.html#stopwatch)
+* [https://danpeirce.github.io/2018/oled-v1.2/oled-v1.2.html#pickmode2620](https://danpeirce.github.io/2018/oled-v1.2/oled-v1.2.html#pickmode2620)
 
 The Photogate box includes a microcontroller with built-in hardware timers.
 
