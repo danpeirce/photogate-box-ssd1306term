@@ -1,5 +1,11 @@
 # Photogate Box
 
+![](image/terminal-in-box.jpg)
+
+![](image/terminal-front.jpg)
+
+![](image/terminal-back.jpg)
+
  *The firmware is still in development.*
  
 ## pickmode (master)
