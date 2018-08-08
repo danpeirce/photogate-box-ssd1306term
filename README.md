@@ -20,6 +20,7 @@ three operating modes.
 1. Stopwatch
 2. Photogate
 3. Pendulum
+4. Pulse
 
 When the timer box is powered up window 1 of the display will cycle displaying possible mode selections in a repeating 
 sequence. The **mode select** button allows one to select the mode.  
@@ -45,6 +46,11 @@ The Photogate mode will time the duration between negative going edges on the ph
 The Pendulum mode is similar to Photogate mode but is displays the total period of a swinging pendulum.
 
 ![](image/pendulum3.jpg)
+
+### Pulse mode
+
+The Pulse mode times the duration from falling edge to rising edge. Currently this mode runs once and returns 
+to the mode selection state with the time displayed in window 2. 
 
 ## breadboard 
 

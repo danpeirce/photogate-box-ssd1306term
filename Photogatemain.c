@@ -73,13 +73,16 @@ void photogateMsg(void);
 void pendulumMsg(void);
 void PhotogateScr(void);
 void clearW2(void);
+void pulseMsg(void);
 
 #define SHIFTOUT 0x0E
 #define REVERT 'r'
 
 void initialization(void);
 void defaultS(void);
+void keepS(void);
 void stopwatchS(void);
+void pulseS(void);
 void photogateM1S(void);
 void photogateM2S(void);
 void modesS(void);
@@ -129,16 +132,25 @@ void main(void)
         inputSW.bit0 = PORTCbits.RC3;
         inputSW.bit1 = PORTCbits.RC4;
         stateMtasks();
-
-
     } 
 }
 
 void defaultS(void)
 {
-    listTmr[0] = timerCountOvrF;
+    timerCountOvrF = 0;
+    listTmr[0] = 0;
     listTmr[1] = 0;
     clearW2();
+    StopwatchMsg();
+    stateMtasks = modesS;
+}
+
+void keepS(void)
+{
+    timerCountOvrF = 0;
+    listTmr[0] = 0;
+    listTmr[1] = 0;
+    //clearW2();
     StopwatchMsg();
     stateMtasks = modesS;
 }
@@ -147,8 +159,13 @@ void modesS(void)
 {
     if ((timerCountOvrF - listTmr[0]) > 14u ) 
     {
-        listTmr[0] = timerCountOvrF;
-        if (listTmr[1] == 2u )
+        listTmr[0] = timerCountOvrF;  // overflow has enough resolution
+        if (listTmr[1] == 3u )
+        {
+            listTmr[1] = 2;
+            pulseMsg();
+        }
+        else if (listTmr[1] == 2u )
         {
             listTmr[1] = 1;
             StopwatchMsg();
@@ -160,7 +177,7 @@ void modesS(void)
         }
         else if (listTmr[1] == 0u )
         {
-            listTmr[1] = 2;
+            listTmr[1] = 3;
             pendulumMsg();
         }
     }
@@ -182,7 +199,7 @@ void modesS(void)
             indexTmr = 0;
             timerCountOvrF = 0;
         }
-        if (listTmr[1] == 2u) 
+        else if (listTmr[1] == 3u) 
         {
             stateMtasks = photogateM2S ;
           
@@ -192,6 +209,45 @@ void modesS(void)
             listTmr[0] = 0;
             listTmr[1] = 0;
         }
+        else if (listTmr[1] == 2u) 
+        {
+            stateMtasks = pulseS ;
+            PIR1bits.CCP1IF = 0; //clear flag for next event
+            OpenCapture1(C1_EVERY_FALL_EDGE & CAPTURE_INT_OFF);  
+            PIR1bits.CCP1IF = 0; //clear flag for next event
+            indexTmr = 0;
+            timerCountOvrF = 0;
+            listTmr[0] = 0;
+            listTmr[1] = 0;
+        }
+    }
+}
+
+void pulseS(void)
+{
+    if (PIR1bits.CCP1IF)
+    {
+        listTmr[indexTmr] = ReadCapture1();
+        indexTmr++;
+        listTmr[indexTmr] = timerCountOvrF;
+        indexTmr++;
+        OpenCapture1(C1_EVERY_RISE_EDGE & CAPTURE_INT_OFF);
+        PIR1bits.CCP1IF = 0; //clear flag for next event
+    } 
+    if (inputSW.bit1) 
+    {
+        stateMtasks = defaultS;
+        OpenCapture1(C1_EVERY_FALL_EDGE & CAPTURE_INT_OFF);
+        PIR1bits.CCP1IF = 0; //clear flag for next event
+    }
+    if (indexTmr == 4) 
+    {    
+        sendTime(listTmr);
+        indexTmr = 0;
+        timerCountOvrF = 0;
+        OpenCapture1(C1_EVERY_FALL_EDGE & CAPTURE_INT_OFF);
+        PIR1bits.CCP1IF = 0; //clear flag for next event
+        stateMtasks = keepS;
     }
 }
 
@@ -308,9 +364,14 @@ void running(void)
     inIndexBuff = inIndexBuff + sprintf( buffer+inIndexBuff, "%s- - -\n", code);
 }
 
+
+void pulseMsg(void)
+{
+    inIndexBuff = inIndexBuff + sprintf( buffer+inIndexBuff, "%s4. Pulse \n", code1);
+}
+
 void StopwatchMsg(void)
 {
- //   inIndexBuff = inIndexBuff + sprintf( buffer+inIndexBuff, "%s%s1. Stopwatch \n", codeC, code1);
     inIndexBuff = inIndexBuff + sprintf( buffer+inIndexBuff, "%s1. Stopwatch \n", code1);
 }
 
@@ -384,7 +445,7 @@ void initialization(void)
     OpenTimer1(TIMER_INT_OFF & T1_16BIT_RW & T1_SOURCE_INT & T1_PS_1_8 & T1_CCP1_T3_CCP2);
     WriteTimer1(0);  // thinking of having having timers running always
     PIR1bits.TMR1IF = 0;
-    OpenCapture1(C1_EVERY_FALL_EDGE & CAPTURE_INT_OFF); // ma move this to different function  
+    OpenCapture1(C1_EVERY_FALL_EDGE & CAPTURE_INT_OFF);   
     Delay10KTCYx(10);	
 }	
 
