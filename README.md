@@ -14,13 +14,13 @@ The timing circuit will be added to the box soon. The PIC18F2620 is part of the 
  
 ## pickmode (master)
 
-The pickmode branch allows selection of different operating modes. As of today (August 1, 2018) there are 
-three operating modes.
+The pickmode branch allows selection of different operating modes. 
 
 1. Stopwatch
 2. Photogate
 3. Pendulum
 4. Pulse
+5. Picket Fence 1
 
 When the timer box is powered up window 1 of the display will cycle displaying possible mode selections in a repeating 
 sequence. The **mode select** button allows one to select the mode.  
@@ -37,7 +37,7 @@ The Mode Reset button will restart the timer with window 1 cycling the available
 
 ### Photogate mode
 
-The Photogate mode will time the duration between negative going edges on the photogate1 input.
+The Photogate mode will time the duration between falling edges on the photogate1 input.
 
 ![]()
 
@@ -51,6 +51,12 @@ The Pendulum mode is similar to Photogate mode but is displays the total period 
 
 The Pulse mode times the duration from falling edge to rising edge. Currently this mode runs once and returns 
 to the mode selection state with the time displayed in window 2. 
+
+### Picket Fence 1
+
+This mode measures the duration between the first falling edge (the trigger point) and each of eight subsequent 
+falling edges. None of the times are displayed until they have all been recorded. The display will then continuously 
+cycle through and display each time.
 
 ## breadboard 
 

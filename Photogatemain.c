@@ -74,9 +74,11 @@ void pendulumMsg(void);
 void PhotogateScr(void);
 void clearW2(void);
 void pulseMsg(void);
+void picketf1Msg(void);
 
 #define SHIFTOUT 0x0E
 #define REVERT 'r'
+#define TIMEBUFSIZE 20
 
 void initialization(void);
 void defaultS(void);
@@ -86,6 +88,8 @@ void pulseS(void);
 void photogateM1S(void);
 void photogateM2S(void);
 void modesS(void);
+void picketfence1S(void);
+void cycleTimesS(void);
 
 unsigned int timerCountOvrF = 0; // used to count Timer1 or Timer3 overflows and thus acts as the 
                                 // upper 16 bits of a 32 bit timer
@@ -104,18 +108,20 @@ static char codeC[] = { 0x0C, 0 };
 union flags debounceSW;
 union flags inputSW;
 
-unsigned int listTmr[] = {0,0,0,0,0,0};
+unsigned int listTmr[20];
 unsigned int indexTmr = 0;
 unsigned int cyclecount = 0;
+unsigned int lastcount = 0;
 
 //*********************************************************************************
 //                               main
 //*********************************************************************************
 void main(void)
 {
+    unsigned int i;
     char gate_mode = 0;
     Delay10KTCYx(20); 
-  
+    for (i=0; i<20; i++) listTmr[i] = 0;
     initialization();
     debounceSW.a_byte = 0;
     inputSW.a_byte = 0;
@@ -157,13 +163,19 @@ void keepS(void)
 
 void modesS(void)
 {
-    if ((timerCountOvrF - listTmr[0]) > 14u ) 
+    // Task: Cycle Display of Modes
+    if ( timerCountOvrF > 14u )  // every 14th overflow 
     {
-        listTmr[0] = timerCountOvrF;  // overflow has enough resolution
-        if (listTmr[1] == 3u )
+        timerCountOvrF = 0;  // overflow has enough resolution
+        if (listTmr[1] == 4u )
+        {
+            listTmr[1] = 3;
+            pulseMsg();
+        }
+        else if (listTmr[1] == 3u )
         {
             listTmr[1] = 2;
-            pulseMsg();
+            picketf1Msg();
         }
         else if (listTmr[1] == 2u )
         {
@@ -177,10 +189,12 @@ void modesS(void)
         }
         else if (listTmr[1] == 0u )
         {
-            listTmr[1] = 3;
+            listTmr[1] = 4;
             pendulumMsg();
         }
     }
+    
+    // Task: Select Mode
     if (inputSW.bit0)
     {
         if (listTmr[1] == 0u) 
@@ -199,7 +213,7 @@ void modesS(void)
             indexTmr = 0;
             timerCountOvrF = 0;
         }
-        else if (listTmr[1] == 3u) 
+        else if (listTmr[1] == 4u) 
         {
             stateMtasks = photogateM2S ;
           
@@ -210,6 +224,16 @@ void modesS(void)
             listTmr[1] = 0;
         }
         else if (listTmr[1] == 2u) 
+        {
+            stateMtasks = picketfence1S ;
+          
+            PIR1bits.CCP1IF = 0; //clear flag for next event
+            indexTmr = 0;
+            timerCountOvrF = 0;
+            listTmr[0] = 0;
+            listTmr[1] = 0;
+        }
+        else if (listTmr[1] == 3u) 
         {
             stateMtasks = pulseS ;
             PIR1bits.CCP1IF = 0; //clear flag for next event
@@ -293,6 +317,48 @@ void photogateM2S(void)
     }
 }
 
+void picketfence1S(void)
+{
+    if (PIR1bits.CCP1IF)
+    {
+        listTmr[indexTmr] = ReadCapture1();
+        indexTmr++;
+        listTmr[indexTmr] = timerCountOvrF;
+        indexTmr++;
+        PIR1bits.CCP1IF = 0; //clear flag for next event
+    } 
+    if (inputSW.bit1) stateMtasks = defaultS;
+            
+    if (indexTmr > 17u) // the last two positions in the 
+    {                                  // buffer kept for point that 
+                                       // will get overwritten
+        listTmr[19] = listTmr[3]; // save for later 
+        listTmr[18] = listTmr[2]; // recall
+        sendTime(listTmr);
+        indexTmr = 4;
+        timerCountOvrF = 0;
+        stateMtasks = cycleTimesS;
+    }
+}
+
+void cycleTimesS(void)
+{
+    if (inputSW.bit1) stateMtasks = defaultS;
+    
+    // Task: Cycle Display of Times
+    if (timerCountOvrF > 14u )  // every 14th overflow 
+    {
+        listTmr[2] = listTmr[indexTmr];
+        indexTmr++;
+        listTmr[3] = listTmr[indexTmr];
+        indexTmr++;
+        clearW2();
+        sendTime(listTmr);
+        timerCountOvrF = 0;
+        if (indexTmr > 19u ) indexTmr = 4;
+    }
+}
+
 void stopwatchS(void)
 {
     if (!debounceSW.bit0)
@@ -364,6 +430,10 @@ void running(void)
     inIndexBuff = inIndexBuff + sprintf( buffer+inIndexBuff, "%s- - -\n", code);
 }
 
+void picketf1Msg(void)
+{
+    inIndexBuff = inIndexBuff + sprintf( buffer+inIndexBuff, "%s5. Picket F1 \n", code1);
+}
 
 void pulseMsg(void)
 {
