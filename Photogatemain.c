@@ -329,11 +329,11 @@ void picketfence1S(void)
     } 
     if (inputSW.bit1) stateMtasks = defaultS;
             
-    if (indexTmr > 17u) // the last two positions in the 
+    if (indexTmr > (TIMEBUFSIZE-3u)) // the last two positions in the 
     {                                  // buffer kept for point that 
                                        // will get overwritten
-        listTmr[19] = listTmr[3]; // save for later 
-        listTmr[18] = listTmr[2]; // recall
+        listTmr[TIMEBUFSIZE-1u] = listTmr[3]; // save for later 
+        listTmr[TIMEBUFSIZE-2u] = listTmr[2]; // recall
         sendTime(listTmr);
         indexTmr = 4;
         timerCountOvrF = 0;
@@ -355,7 +355,7 @@ void cycleTimesS(void)
         clearW2();
         sendTime(listTmr);
         timerCountOvrF = 0;
-        if (indexTmr > 19u ) indexTmr = 4;
+        if (indexTmr > (TIMEBUFSIZE-1u) ) indexTmr = 4;
     }
 }
 
