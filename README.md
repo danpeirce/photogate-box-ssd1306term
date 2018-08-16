@@ -58,6 +58,10 @@ This mode measures the duration between the first falling edge (the trigger poin
 falling edges. None of the times are displayed until they have all been recorded. The display will then continuously 
 cycle through and display each time.
 
+## State Transition Diagram
+
+![](image/pickmode.png)
+
 ## breadboard 
 
 ![](image/pickmode2620cct.jpg)
