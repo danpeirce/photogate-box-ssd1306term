@@ -9,24 +9,16 @@ digraph finite_state_machine {
         photogateM1S -> defaultS [ label = "Reset Mode SW" ]
         modeS -> photogateM2S [ label = "Select Pendulum" ]
         photogateM2S -> defaultS [ label = "Reset Mode SW" ]
-        modeS -> pulseS [ label = "Select Pulse" ]
+        modeS -> pulseS [ label = "Select Pulse Mode" ]
         pulseS -> defaultS [ label = "Reset Mode SW" ]
         pulseS -> keepS [label = "second edge" ]
         keepS -> modeS
-        modeS -> picketfence1S [ label = "Select Picket Fence 1" ]
+        modeS -> picketfence1S [ label = "Select Picket Fence 1 Mode" ]
         picketfence1S -> defaultS [ label = "Reset Mode SW" ]
-        picketfence1S -> cycleTimesS
+        picketfence1S -> cycleTimesS [ label = "All Edges Detected" ]
         cycleTimesS -> defaultS [ label = "Reset Mode SW" ]
 }
 
 /*
-void defaultS(void);
-void keepS(void);
-void stopwatchS(void);
-void pulseS(void);
-void photogateM1S(void);
-void photogateM2S(void);
-void modesS(void);
-void picketfence1S(void);
-void cycleTimesS(void);
+dot -Tpng pickmode.gv -o pickmode.png
 */
