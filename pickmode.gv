@@ -1,0 +1,32 @@
+digraph finite_state_machine {
+        rankdir=LR;
+        size="8,5"
+        //node [shape = circle];
+        defaultS -> modeS 
+        modeS -> stopwatchS [ label = "Select Stopwatch" ]
+        stopwatchS -> defaultS [ label = "Reset Mode SW" ]
+        modeS -> photogateM1S [ label = "Select Photogate" ]
+        photogateM1S -> defaultS [ label = "Reset Mode SW" ]
+        modeS -> photogateM2S [ label = "Select Pendulum" ]
+        photogateM2S -> defaultS [ label = "Reset Mode SW" ]
+        modeS -> pulseS [ label = "Select Pulse" ]
+        pulseS -> defaultS [ label = "Reset Mode SW" ]
+        pulseS -> keepS [label = "second edge" ]
+        keepS -> modeS
+        modeS -> picketfence1S [ label = "Select Picket Fence 1" ]
+        picketfence1S -> defaultS [ label = "Reset Mode SW" ]
+        picketfence1S -> cycleTimesS
+        cycleTimesS -> defaultS [ label = "Reset Mode SW" ]
+}
+
+/*
+void defaultS(void);
+void keepS(void);
+void stopwatchS(void);
+void pulseS(void);
+void photogateM1S(void);
+void photogateM2S(void);
+void modesS(void);
+void picketfence1S(void);
+void cycleTimesS(void);
+*/
