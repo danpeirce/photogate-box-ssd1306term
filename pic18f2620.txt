@@ -12,7 +12,7 @@ OSC2/CLKO/RA6             |10   19| VSS
 RC0/T1OSO/T13CKI          |11   18| RX*
 RC1/T1OSI                 |12   17| TX*
 CCP1 (photogate1)*        |13   16| RC5/SDO
-RC3* (LED bicolor)        |14   15| RC4* (LED bicolor)
+RC3* (ModeSel/Start/Stop) |14   15| RC4* (Mode Reset)
                           +-------+
                           
      * function of this pin is set (other pins have future options shown)
