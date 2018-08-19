@@ -1,6 +1,7 @@
 digraph finite_state_machine {
         rankdir=LR;
-        size="8,5"
+        size="8,10"
+        graph [ranksep="0.525", nodesep="0.5"];
         //node [shape = circle];
         defaultS -> modeS 
         modeS -> stopwatchS [ label = "Select Stopwatch" ]
