@@ -1,23 +1,37 @@
 digraph finite_state_machine {
-        rankdir=LR;
+        //rankdir=LR;
         size="8,10"
-        graph [ranksep="0.525", nodesep="0.5"];
+        //graph [ranksep="0.525", nodesep="0.5"];
+        start [shape=point, xlabel=<Take points at top and<br /> bottom as same point.>];
+	end [shape=point];
         //node [shape = circle];
-        defaultS -> modeS 
-        modeS -> stopwatchS [ label = "Select Stopwatch" ]
-        stopwatchS -> defaultS [ label = "Reset Mode SW" ]
-        modeS -> photogateM1S [ label = "Select Photogate" ]
-        photogateM1S -> defaultS [ label = "Reset Mode SW" ]
-        modeS -> photogateM2S [ label = "Select Pendulum" ]
-        photogateM2S -> defaultS [ label = "Reset Mode SW" ]
-        modeS -> pulseS [ label = "Select Pulse Mode" ]
-        pulseS -> defaultS [ label = "Reset Mode SW" ]
+        start -> defaultS
+        defaultS -> op1;
+        
+        op1 -> stopwatchS [ label = "Sel SW" ]
+        stopwatchS -> end [ label = "Reset SW" ]
+        op2 -> photogateM1S [ label = "Sel Photogate" ]
+        photogateM1S -> end [ label = "Reset SW" ]
+        op3 -> photogateM2S [ label = <Sel SWPendulum> ]
+        photogateM2S -> end [ label = "Reset SW" ]
+        op4 -> pulseS [ label = "Sel SW" ]
+        pulseS -> end [ label = "Reset SW" ]
         pulseS -> keepS [label = "second edge" ]
-        keepS -> modeS
-        modeS -> picketfence1S [ label = "Select Picket Fence 1 Mode" ]
-        picketfence1S -> defaultS [ label = "Reset Mode SW" ]
+        keepS -> op1;
+        op5 -> picketfence1S [ label = "Sel SW" ]
+        picketfence1S -> end [ label = "Reset SW" ]
         picketfence1S -> cycleTimesS [ label = "All Edges Detected" ]
-        cycleTimesS -> defaultS [ label = "Reset Mode SW" ]
+        cycleTimesS -> end [ label = "Reset SW" ]
+        subgraph cluster_mode {
+                 rankdir=TB;
+                 node [shape = circle];
+                 op1 -> op2;
+                 op2 -> op3;
+                 op3 -> op4;
+                 op4 -> op5;
+                 op5 -> op1;
+                 label = "modeS";
+        } 
 }
 
 /*
