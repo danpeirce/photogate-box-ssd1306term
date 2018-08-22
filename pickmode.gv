@@ -6,12 +6,14 @@ digraph finite_state_machine {
 	end [shape=point];
         //node [shape = circle];
         start -> defaultS
-        defaultS -> op1;
+        defaultS -> op1 [ xlabel = <modeS cycles options in display<br />Select option with Mode Select Switch> ]
         
-        op1 -> stopwatchS [ label = "Sel SW" ]
+        op1 -> stopwatchS [ label = "Sel SW"]
         stopwatchS -> end [ label = "Reset SW" ]
-        op2 -> photogateM1S [ label = "Sel Photogate" ]
+        op2 -> photogateM1S [ label = <Sel SW<br />and /Reset SW> ]
+        op2 -> photogateM1kS [ label = <Sel SW<br />and Reset SW> ]
         photogateM1S -> end [ label = "Reset SW" ]
+        photogateM1kS -> keepS [ label = "Edges found" ]
         op3 -> photogateM2S [ label = <Sel SWPendulum> ]
         photogateM2S -> end [ label = "Reset SW" ]
         op4 -> pulseS [ label = "Sel SW" ]
@@ -30,8 +32,10 @@ digraph finite_state_machine {
                  op3 -> op4;
                  op4 -> op5;
                  op5 -> op1;
-                 label = "modeS";
+                 label = "modeSx";
+                 
         } 
+        
 }
 
 /*

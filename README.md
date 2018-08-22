@@ -37,7 +37,16 @@ The Mode Reset button will restart the timer with window 1 cycling the available
 
 ### Photogate mode
 
-The Photogate mode will time the duration between falling edges on the photogate1 input.
+There are two varients of this mode.
+
+1. **photogateM1S** The Photogate mode will time the duration between falling edges on the 
+   photogate1 input. If new edges are detected the old time will be overwritten. Reset button
+   will return to mode select state **modeS**.
+2. **photogateM1kS** Must hold reset button while pressing mode select button. The Photogate 
+   keep mode will time the duration between falling edges on the photogate1 input. The time 
+   is displayed in window 2 and return to mode select state is automatic so the time in
+   window 2 is not overwritten before a new mode is selected.
+   
 
 ![]()
 
