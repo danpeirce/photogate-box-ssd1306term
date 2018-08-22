@@ -86,6 +86,7 @@ void keepS(void);
 void stopwatchS(void);
 void pulseS(void);
 void photogateM1S(void);
+void photogateM1kS(void); 
 void photogateM2S(void);
 void modesS(void);
 void picketfence1S(void);
@@ -199,7 +200,8 @@ void modesS(void)
     {
         if (listTmr[1] == 0u) 
         {
-            stateMtasks = photogateM1S ;
+            if (inputSW.bit1) stateMtasks = photogateM1kS ;
+            else stateMtasks = photogateM1S;
             PhotogateScr();
             PIR1bits.CCP1IF = 0; //clear flag for next event
             indexTmr = 0;
@@ -272,6 +274,28 @@ void pulseS(void)
         OpenCapture1(C1_EVERY_FALL_EDGE & CAPTURE_INT_OFF);
         PIR1bits.CCP1IF = 0; //clear flag for next event
         stateMtasks = keepS;
+    }
+}
+
+void photogateM1kS(void)
+{
+    if (PIR1bits.CCP1IF)
+    {
+        listTmr[indexTmr] = ReadCapture1();
+        indexTmr++;
+        listTmr[indexTmr] = timerCountOvrF;
+        indexTmr++;
+        PIR1bits.CCP1IF = 0; //clear flag for next event
+    } 
+    //  this mode is copied from photogateM1S with modifications
+    //  removed from new mode if (inputSW.bit1) stateMtasks = defaultS;
+            
+    if (indexTmr == 4) 
+    {    
+        sendTime(listTmr);
+        indexTmr = 0;
+        timerCountOvrF = 0;
+        stateMtasks = keepS; // added to new mode
     }
 }
 
