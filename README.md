@@ -2,19 +2,23 @@
 
 The photogate box will contain two interconnected circuits. The display terminal circuit is shown here.
 
-![](image/terminal-in-box.jpg)
+![](image/timerbox.jpg)
 
 ![](image/terminal-front.jpg)
 
 ![](image/terminal-back.jpg)
 
-The timing circuit will be added to the box soon. The PIC18F2620 is part of the timing circuit.
+The PIC18F2620 is part of the timing circuit which is mounted on the top board of this image showing all
+mounted parts.
 
- *The firmware is still in development.*
- 
-## pickmode (master)
+![](image/all_mounted_parts.jpg)
 
-The pickmode branch allows selection of different operating modes. 
+This version contains two [custom 3D printed mounting brackets](https://github.com/danpeirce/pic-box-bracket) to secure the circuit boards to the box
+lid.
+
+## pickmode
+
+The pickmode2620 branch allows selection of different operating modes. 
 
 1. Stopwatch
 2. Photogate
@@ -48,8 +52,6 @@ There are two varients of this mode.
    window 2 is not overwritten before a new mode is selected.
    
 
-![]()
-
 ### Pendulum mode
 
 The Pendulum mode is similar to Photogate mode but is displays the total period of a swinging pendulum.
@@ -73,9 +75,9 @@ cycle through and display each time.
 
 ## breadboard 
 
-![](image/pickmode2620cct.jpg)
+Initial assembly was done on a breadboard.
 
-This is still at the testing stage and built on a breadboard.
+![](image/pickmode2620cct.jpg)
 
 Notes specific for this branch are at:
 
@@ -85,9 +87,9 @@ The Photogate box includes a microcontroller with built-in hardware timers.
 
 This branch is for the PIC18F2620 MCU. This branch uses an external 32 Mhz oscillator.
 
-For now work is being done on a breadboard.
-
 ![](image/timeswitchcct.jpg)
+
+## Previous Project
 
 The prototype from 2014 looked like this and had a USB interface and no display.
 
