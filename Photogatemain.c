@@ -200,8 +200,8 @@ void modesS(void)
     {
         if (listTmr[1] == 0u) 
         {
-            if (inputSW.bit1) stateMtasks = photogateM1kS ;
-            else stateMtasks = photogateM1S;
+            if (inputSW.bit1) stateMtasks = photogateM1kS ;  // only photogateM1 has an alternate
+            else stateMtasks = photogateM1S;                 // state so far
             PhotogateScr();
             PIR1bits.CCP1IF = 0; //clear flag for next event
             indexTmr = 0;
@@ -211,40 +211,52 @@ void modesS(void)
         }    
         else if (listTmr[1] == 1u) 
         {
-            stateMtasks = stopwatchS ;
-            indexTmr = 0;
-            timerCountOvrF = 0;
+            if (!inputSW.bit1)
+            {
+                stateMtasks = stopwatchS ;
+                indexTmr = 0;
+                timerCountOvrF = 0;
+            }
         }
         else if (listTmr[1] == 4u) 
         {
-            stateMtasks = photogateM2S ;
-          
-            PIR1bits.CCP1IF = 0; //clear flag for next event
-            indexTmr = 0;
-            timerCountOvrF = 0;
-            listTmr[0] = 0;
-            listTmr[1] = 0;
+            if (!inputSW.bit1)
+            {
+                stateMtasks = photogateM2S ;
+
+                PIR1bits.CCP1IF = 0; //clear flag for next event
+                indexTmr = 0;
+                timerCountOvrF = 0;
+                listTmr[0] = 0;
+                listTmr[1] = 0;
+            }
         }
         else if (listTmr[1] == 2u) 
         {
-            stateMtasks = picketfence1S ;
+            if (!inputSW.bit1)
+            {
+                stateMtasks = picketfence1S ;
           
-            PIR1bits.CCP1IF = 0; //clear flag for next event
-            indexTmr = 0;
-            timerCountOvrF = 0;
-            listTmr[0] = 0;
-            listTmr[1] = 0;
+                PIR1bits.CCP1IF = 0; //clear flag for next event
+                indexTmr = 0;
+                timerCountOvrF = 0;
+                listTmr[0] = 0;
+                listTmr[1] = 0;
+            }
         }
         else if (listTmr[1] == 3u) 
         {
-            stateMtasks = pulseS ;
-            PIR1bits.CCP1IF = 0; //clear flag for next event
-            OpenCapture1(C1_EVERY_FALL_EDGE & CAPTURE_INT_OFF);  
-            PIR1bits.CCP1IF = 0; //clear flag for next event
-            indexTmr = 0;
-            timerCountOvrF = 0;
-            listTmr[0] = 0;
-            listTmr[1] = 0;
+            if (!inputSW.bit1)
+            {
+                stateMtasks = pulseS ;
+                PIR1bits.CCP1IF = 0; //clear flag for next event
+                OpenCapture1(C1_EVERY_FALL_EDGE & CAPTURE_INT_OFF);  
+                PIR1bits.CCP1IF = 0; //clear flag for next event
+                indexTmr = 0;
+                timerCountOvrF = 0;
+                listTmr[0] = 0;
+                listTmr[1] = 0;
+            }
         }
     }
 }
@@ -370,7 +382,7 @@ void cycleTimesS(void)
     if (inputSW.bit1) stateMtasks = defaultS;
     
     // Task: Cycle Display of Times
-    if (timerCountOvrF > 14u )  // every 14th overflow 
+    if (timerCountOvrF > 28u )  // every 28th overflow 
     {
         listTmr[2] = listTmr[indexTmr];
         indexTmr++;
