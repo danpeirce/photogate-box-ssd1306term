@@ -84,10 +84,10 @@ void initialization(void);
 void defaultS(void);
 void keepS(void);
 void stopwatchS(void);
+void gateS(void);
 void pulseS(void);
-void photogateM1S(void);
-void photogateM1kS(void); 
-void photogateM2S(void);
+void pulsekS(void); 
+void pendulumS(void);
 void modesS(void);
 void picketfence1S(void);
 void cycleTimesS(void);
@@ -171,7 +171,7 @@ void modesS(void)
         if (listTmr[1] == 4u )
         {
             listTmr[1] = 3;
-            pulseMsg();
+            photogateMsg();
         }
         else if (listTmr[1] == 3u )
         {
@@ -186,7 +186,7 @@ void modesS(void)
         else if (listTmr[1] == 1u )
         {
             listTmr[1] = 0;
-            photogateMsg();
+            pulseMsg();
         }
         else if (listTmr[1] == 0u )
         {
@@ -200,9 +200,9 @@ void modesS(void)
     {
         if (listTmr[1] == 0u) 
         {
-            if (inputSW.bit1) stateMtasks = photogateM1kS ;  // only photogateM1 has an alternate
-            else stateMtasks = photogateM1S;                 // state so far
-            PhotogateScr();
+            if (inputSW.bit1) stateMtasks = pulsekS ;  // only photogateM1 has an alternate
+            else stateMtasks = pulseS;                 // state so far
+            //PhotogateScr();
             PIR1bits.CCP1IF = 0; //clear flag for next event
             indexTmr = 0;
             timerCountOvrF = 0;
@@ -222,7 +222,7 @@ void modesS(void)
         {
             if (!inputSW.bit1)
             {
-                stateMtasks = photogateM2S ;
+                stateMtasks = pendulumS ;
 
                 PIR1bits.CCP1IF = 0; //clear flag for next event
                 indexTmr = 0;
@@ -248,7 +248,7 @@ void modesS(void)
         {
             if (!inputSW.bit1)
             {
-                stateMtasks = pulseS ;
+                stateMtasks = gateS ;
                 PIR1bits.CCP1IF = 0; //clear flag for next event
                 OpenCapture1(C1_EVERY_FALL_EDGE & CAPTURE_INT_OFF);  
                 PIR1bits.CCP1IF = 0; //clear flag for next event
@@ -261,7 +261,7 @@ void modesS(void)
     }
 }
 
-void pulseS(void)
+void gateS(void)
 {
     if (PIR1bits.CCP1IF)
     {
@@ -289,7 +289,7 @@ void pulseS(void)
     }
 }
 
-void photogateM1kS(void)
+void pulsekS(void)
 {
     if (PIR1bits.CCP1IF)
     {
@@ -299,7 +299,7 @@ void photogateM1kS(void)
         indexTmr++;
         PIR1bits.CCP1IF = 0; //clear flag for next event
     } 
-    //  this mode is copied from photogateM1S with modifications
+    //  this mode is copied from pulseS with modifications
     //  removed from new mode if (inputSW.bit1) stateMtasks = defaultS;
             
     if (indexTmr == 4) 
@@ -311,7 +311,7 @@ void photogateM1kS(void)
     }
 }
 
-void photogateM1S(void)
+void pulseS(void)
 {
     if (PIR1bits.CCP1IF)
     {
@@ -331,7 +331,7 @@ void photogateM1S(void)
     }
 }
 
-void photogateM2S(void)
+void pendulumS(void)
 {
     if (PIR1bits.CCP1IF)
     {
@@ -488,7 +488,7 @@ void PhotogateScr(void)
 
 void photogateMsg(void)
 {
-    inIndexBuff = inIndexBuff + sprintf( buffer+inIndexBuff, "%s2. Photogate \n", code1);
+    inIndexBuff = inIndexBuff + sprintf( buffer+inIndexBuff, "%s2. Gate \n", code1);
 }
 
 void pendulumMsg(void)
