@@ -146,7 +146,7 @@ void defaultS(void)
 {
     timerCountOvrF = 0;
     listTmr[0] = 0;
-    listTmr[1] = 0;
+    listTmr[1] = 1;
     clearW2();
     StopwatchMsg();
     stateMtasks = modesS;
@@ -156,7 +156,7 @@ void keepS(void)
 {
     timerCountOvrF = 0;
     listTmr[0] = 0;
-    listTmr[1] = 0;
+    listTmr[1] = 1;
     //clearW2();
     StopwatchMsg();
     stateMtasks = modesS;
@@ -165,7 +165,7 @@ void keepS(void)
 void modesS(void)
 {
     // Task: Cycle Display of Modes
-    if ( timerCountOvrF > 14u )  // every 14th overflow 
+    if ( (timerCountOvrF > 4u) && inputSW.bit1 )  // every 14th overflow 
     {
         timerCountOvrF = 0;  // overflow has enough resolution
         if (listTmr[1] == 4u )
