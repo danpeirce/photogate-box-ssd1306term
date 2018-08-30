@@ -21,13 +21,15 @@ lid.
 The pickmode2620 branch allows selection of different operating modes. 
 
 1. Stopwatch
-2. Photogate
+2. Pulse
 3. Pendulum
-4. Pulse
+4. Gate
 5. Picket Fence 1
 
 When the timer box is powered up window 1 of the display will cycle displaying possible mode selections in a repeating 
 sequence. The **mode select** button allows one to select the mode.  
+
+**significant changes to the way this cycles will be made in a new branch**
 
 ### Stopwatch mode
 
@@ -39,14 +41,14 @@ The Mode Reset button will restart the timer with window 1 cycling the available
 
 ![](image/stopwatch1.jpg)
 
-### Photogate mode
+### Pulse mode
 
 There are two varients of this mode.
 
-1. **photogateM1S** The Photogate mode will time the duration between falling edges on the 
+1. **PulseS** The Photogate mode will time the duration between falling edges on the 
    photogate1 input. If new edges are detected the old time will be overwritten. Reset button
    will return to mode select state **modeS**.
-2. **photogateM1kS** Must hold reset button while pressing mode select button. The Photogate 
+2. **PulsekS** Must hold reset button while pressing mode select button. The Photogate 
    keep mode will time the duration between falling edges on the photogate1 input. The time 
    is displayed in window 2 and return to mode select state is automatic so the time in
    window 2 is not overwritten before a new mode is selected.
@@ -58,9 +60,9 @@ The Pendulum mode is similar to Photogate mode but is displays the total period 
 
 ![](image/pendulum3.jpg)
 
-### Pulse mode
+### Gate mode
 
-The Pulse mode times the duration from falling edge to rising edge. Currently this mode runs once and returns 
+The Gate mode times the duration from falling edge to rising edge. Currently this mode runs once and returns 
 to the mode selection state with the time displayed in window 2. 
 
 ### Picket Fence 1
@@ -70,6 +72,8 @@ falling edges. None of the times are displayed until they have all been recorded
 cycle through and display each time.
 
 ## State Transition Diagram
+
+**this state transition diagram needs updates as it does not yet reflect recent changes to the firmware**
 
 ![](image/pickmode.png)
 

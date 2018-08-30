@@ -473,7 +473,7 @@ void picketf1Msg(void)
 
 void pulseMsg(void)
 {
-    inIndexBuff = inIndexBuff + sprintf( buffer+inIndexBuff, "%s4. Pulse \n", code1);
+    inIndexBuff = inIndexBuff + sprintf( buffer+inIndexBuff, "%s2. Pulse \n", code1);
 }
 
 void StopwatchMsg(void)
@@ -488,7 +488,7 @@ void PhotogateScr(void)
 
 void photogateMsg(void)
 {
-    inIndexBuff = inIndexBuff + sprintf( buffer+inIndexBuff, "%s2. Gate \n", code1);
+    inIndexBuff = inIndexBuff + sprintf( buffer+inIndexBuff, "%s4. Gate \n", code1);
 }
 
 void pendulumMsg(void)
