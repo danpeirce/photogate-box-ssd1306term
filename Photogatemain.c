@@ -126,12 +126,13 @@ unsigned int OvrFtrigger = 262;
 void main(void)
 {
     unsigned int i;
-    char gate_mode = 0;
+    //char gate_mode = 0;
     Delay10KTCYx(20); 
     for (i=0; i<20; i++) listTmr[i] = 0;
     initialization();
     debounceSW.a_byte = 0;
     inputSW.a_byte = 0;
+    
     
     while(1)
     { 
@@ -593,8 +594,12 @@ void initialization(void)
     OpenTimer1(TIMER_INT_OFF & T1_16BIT_RW & T1_SOURCE_INT & T1_PS_1_8 & T1_CCP1_T3_CCP2);
     WriteTimer1(0);  // thinking of having having timers running always
     PIR1bits.TMR1IF = 0;
-    OpenCapture1(C1_EVERY_FALL_EDGE & CAPTURE_INT_OFF);   
-    Delay10KTCYx(10);	
+    OpenCapture1(C1_EVERY_FALL_EDGE & CAPTURE_INT_OFF); 
+    {
+        int i = 0; 
+        for (i=0; i< 35 ;i++) Delay10KTCYx(200);
+    }
+
 }	
 
 
