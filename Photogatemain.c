@@ -68,6 +68,7 @@ union flags
 void txbuffertask(void);
 void sendTime(unsigned int *listTmr);
 void running(void);
+void zero(void);
 void StopwatchMsg(void);
 void photogateMsg(void);
 void pendulumMsg(void);
@@ -75,6 +76,7 @@ void PhotogateScr(void);
 void clearW2(void);
 void pulseMsg(void);
 void picketf1Msg(void);
+void showms(void);
 
 #define SHIFTOUT 0x0E
 #define REVERT 'r'
@@ -91,6 +93,7 @@ void pendulumS(void);
 void modesS(void);
 void picketfence1S(void);
 void cycleTimesS(void);
+
 
 unsigned int timerCountOvrF = 0; // used to count Timer1 or Timer3 overflows and thus acts as the 
                                 // upper 16 bits of a 32 bit timer
@@ -113,6 +116,9 @@ unsigned int listTmr[20];
 unsigned int indexTmr = 0;
 unsigned int cyclecount = 0;
 unsigned int lastcount = 0;
+unsigned long millisec = 0;
+unsigned int OvrFtrigger = 262;
+
 
 //*********************************************************************************
 //                               main
@@ -208,6 +214,7 @@ void modesS(void)
             timerCountOvrF = 0;
             listTmr[0] = 0;
             listTmr[1] = 0;
+            zero();
         }    
         else if (listTmr[1] == 1u) 
         {
@@ -216,6 +223,7 @@ void modesS(void)
                 stateMtasks = stopwatchS ;
                 indexTmr = 0;
                 timerCountOvrF = 0;
+                zero();
             }
         }
         else if (listTmr[1] == 4u) 
@@ -229,6 +237,7 @@ void modesS(void)
                 timerCountOvrF = 0;
                 listTmr[0] = 0;
                 listTmr[1] = 0;
+                zero();
             }
         }
         else if (listTmr[1] == 2u) 
@@ -242,6 +251,7 @@ void modesS(void)
                 timerCountOvrF = 0;
                 listTmr[0] = 0;
                 listTmr[1] = 0;
+                zero();
             }
         }
         else if (listTmr[1] == 3u) 
@@ -256,6 +266,7 @@ void modesS(void)
                 timerCountOvrF = 0;
                 listTmr[0] = 0;
                 listTmr[1] = 0;
+                zero();
             }
         }
     }
@@ -269,9 +280,21 @@ void gateS(void)
         indexTmr++;
         listTmr[indexTmr] = timerCountOvrF;
         indexTmr++;
+        if(indexTmr == 2u) 
+        {
+            zero();
+            millisec = 262;
+            OvrFtrigger = timerCountOvrF +4;
+        }
         OpenCapture1(C1_EVERY_RISE_EDGE & CAPTURE_INT_OFF);
         PIR1bits.CCP1IF = 0; //clear flag for next event
     } 
+    if ( (indexTmr == 2u) &&  (timerCountOvrF == OvrFtrigger))
+    {
+        showms();
+        OvrFtrigger = OvrFtrigger + 4;
+        millisec = millisec + 262;
+    }
     if (inputSW.bit1) 
     {
         stateMtasks = defaultS;
@@ -285,7 +308,7 @@ void gateS(void)
         timerCountOvrF = 0;
         OpenCapture1(C1_EVERY_FALL_EDGE & CAPTURE_INT_OFF);
         PIR1bits.CCP1IF = 0; //clear flag for next event
-        stateMtasks = keepS;
+        //stateMtasks = keepS;
     }
 }
 
@@ -409,7 +432,12 @@ void stopwatchS(void)
                 indexTmr++;
                 listTmr[indexTmr] = timerCountOvrF;
                 indexTmr++;
-                running();
+                if(indexTmr == 2u) 
+                {
+                    zero();
+                    millisec = 262;
+                    OvrFtrigger = timerCountOvrF +4;
+                }
             }
         }
         if (cyclecount > 10) // little or no bounce on rising edge
@@ -429,6 +457,12 @@ void stopwatchS(void)
         }
     }
     if (inputSW.bit1) stateMtasks = defaultS;
+    if ( (indexTmr == 2u) &&  (timerCountOvrF == OvrFtrigger))
+    {
+        showms();
+        OvrFtrigger = OvrFtrigger + 4;
+        millisec = millisec + 262;
+    }
     if (indexTmr == 4) 
     {    
         sendTime(listTmr);
@@ -466,6 +500,14 @@ void running(void)
     inIndexBuff = inIndexBuff + sprintf( buffer+inIndexBuff, "%s- - -\n", code);
 }
 
+void showms(void)
+{
+    inIndexBuff = inIndexBuff + sprintf( buffer+inIndexBuff, "%s%lu mS\n", code, millisec);
+}
+void zero(void)
+{
+    inIndexBuff = inIndexBuff + sprintf( buffer+inIndexBuff, "%s  0 mS\n", code);
+}
 void picketf1Msg(void)
 {
     inIndexBuff = inIndexBuff + sprintf( buffer+inIndexBuff, "%s5. Picket F1 \n", code1);
