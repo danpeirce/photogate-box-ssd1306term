@@ -45,15 +45,9 @@ The Mode Reset button will restart the timer so that a new mode can be selected.
 
 ### Pulse mode
 
-There are two variants of this mode.
-
-1. **PulseS** The Photogate mode will time the duration between falling edges on the 
-   photogate1 input. If new edges are detected the old time will be overwritten. Reset button
-   will return to mode select state **modeS**.
-2. **PulsekS** Must hold reset button while pressing mode select button. The Photogate 
-   keep mode will time the duration between falling edges on the photogate1 input. The time 
-   is displayed in window 2 and return to mode select state is automatic so the time in
-   window 2 is not overwritten before a new mode is selected.
+The Photogate mode will time the duration between falling edges on the 
+photogate1 input. If new edges are detected the old time will be overwritten. Reset button
+will return to mode select state **modeS**.
    
 
 ### Pendulum mode
@@ -75,9 +69,7 @@ The select/start/stop button will allow the timer to watch for a new trigger.
 
 ## State Transition Diagram
 
-**this state transition diagram needs updates as it does not yet reflect recent changes to the firmware**
-
-![](image/pickmode.png)
+![](image/mancyclemode.png)
 
 ## breadboard 
 
