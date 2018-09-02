@@ -16,9 +16,12 @@ mounted parts.
 This version contains two [custom 3D printed mounting brackets](https://github.com/danpeirce/pic-box-bracket) to secure the circuit boards to the box
 lid.
 
-## pickmode
+## Cycle Modes
 
-The pickmode2620 branch allows selection of different operating modes. 
+When powered up the timer display is initially blank and then shows two splash screens. After the Photogate timer 
+splash screen the displays the first mode option. The fist mode option is the Stopwatch mode. One can cycle through 
+the display modes by pressing the **Mode Cycle/Reset** button. 
+
 
 1. Stopwatch
 2. Pulse
@@ -26,24 +29,23 @@ The pickmode2620 branch allows selection of different operating modes.
 4. Gate
 5. Picket Fence 1
 
-When the timer box is powered up window 1 of the display will cycle displaying possible mode selections in a repeating 
-sequence. The **Mode Cycle/Reset** button will advance the displayed mode. The **mode select** button allows one to select the mode.  
-
-**significant changes to the way this cycles will be made in a new branch**
+When the timer box is powered up window 1 of the display will cycle displaying possible mode selections in a 
+repeating sequence. The **Mode Cycle/Reset** button will advance the displayed mode. The **mode select** 
+button allows one to select the mode.  
 
 ### Stopwatch mode
 
 When the Stopwatch mode is selected the **mode select** button becomes the Start/Stop button.
-During timing window 2 of the display shows **- - -**.
-When timing is stopped the time will be displayed in window 2. Time is reset automatically if/when the Start/Stop 
-button is pressed again.
-The Mode Reset button will restart the timer with window 1 cycling the available modes.
+During timing window 2 of the display shows a running approximation of elapsed time..
+When timing is stopped the actual elapsed time will be displayed in window 2. Time is reset automatically if/when 
+the Start/Stop button is pressed again.
+The Mode Reset button will restart the timer so that a new mode can be selected.
 
 ![](image/stopwatch1.jpg)
 
 ### Pulse mode
 
-There are two varients of this mode.
+There are two variants of this mode.
 
 1. **PulseS** The Photogate mode will time the duration between falling edges on the 
    photogate1 input. If new edges are detected the old time will be overwritten. Reset button
@@ -62,14 +64,14 @@ The Pendulum mode is similar to Photogate mode but is displays the total period 
 
 ### Gate mode
 
-The Gate mode times the duration from falling edge to rising edge. Currently this mode runs once and returns 
-to the mode selection state with the time displayed in window 2. 
+The Gate mode times the duration from falling edge to rising edge. 
 
 ### Picket Fence 1
 
 This mode measures the duration between the first falling edge (the trigger point) and each of eight subsequent 
-falling edges. None of the times are displayed until they have all been recorded. The display will then continuously 
-cycle through and display each time.
+falling edges. Once triggered the display shows approximate running time until eight edges have been captured. 
+Once the times have been captured one can cycle through the times with the mode cycle button. 
+The select/start/stop button will allow the timer to watch for a new trigger.
 
 ## State Transition Diagram
 

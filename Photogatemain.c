@@ -172,7 +172,7 @@ void keepS(void)
 void modesS(void)
 {
     // Task: Cycle Display of Modes
-    if ( (timerCountOvrF > 4u) && inputSW.bit1 )  // every 14th overflow 
+    if ( (timerCountOvrF > 4u) && inputSW.bit1 )   
     {
         timerCountOvrF = 0;  // overflow has enough resolution
         if (listTmr[1] == 4u )
@@ -322,10 +322,23 @@ void pulsekS(void)
         listTmr[indexTmr] = timerCountOvrF;
         indexTmr++;
         PIR1bits.CCP1IF = 0; //clear flag for next event
+        if(indexTmr == 2u) 
+        {
+            zero();
+            millisec = 262;
+            OvrFtrigger = timerCountOvrF +4;
+        }
     } 
     //  this mode is copied from pulseS with modifications
     //  removed from new mode if (inputSW.bit1) stateMtasks = defaultS;
-            
+    
+    if ( (indexTmr == 2u) &&  (timerCountOvrF == OvrFtrigger))
+    {
+        showms();
+        OvrFtrigger = OvrFtrigger + 4;
+        millisec = millisec + 262;
+    }
+    
     if (indexTmr == 4) 
     {    
         sendTime(listTmr);
@@ -344,9 +357,20 @@ void pulseS(void)
         listTmr[indexTmr] = timerCountOvrF;
         indexTmr++;
         PIR1bits.CCP1IF = 0; //clear flag for next event
+        if(indexTmr == 2u) 
+        {
+            zero();
+            millisec = 262;
+            OvrFtrigger = timerCountOvrF +4;
+        }
     } 
     if (inputSW.bit1) stateMtasks = defaultS;
-            
+    if ( (indexTmr == 2u) &&  (timerCountOvrF == OvrFtrigger))
+    {
+        showms();
+        OvrFtrigger = OvrFtrigger + 4;
+        millisec = millisec + 262;
+    }        
     if (indexTmr == 4) 
     {    
         sendTime(listTmr);
@@ -364,9 +388,22 @@ void pendulumS(void)
         listTmr[indexTmr] = timerCountOvrF;
         indexTmr++;
         PIR1bits.CCP1IF = 0; //clear flag for next event
+        if(indexTmr == 2u) 
+        {
+            zero();
+            millisec = 262;
+            OvrFtrigger = timerCountOvrF +4;
+        }
     } 
     if (inputSW.bit1) stateMtasks = defaultS;
-            
+       
+    if ( (indexTmr >= 2u) &&  (timerCountOvrF == OvrFtrigger))
+    {
+        showms();
+        OvrFtrigger = OvrFtrigger + 4;
+        millisec = millisec + 262;
+    }
+    
     if (indexTmr == 6) 
     {    
         listTmr[2] = listTmr[4]; // move relevant time point 
@@ -385,10 +422,23 @@ void picketfence1S(void)
         indexTmr++;
         listTmr[indexTmr] = timerCountOvrF;
         indexTmr++;
-        PIR1bits.CCP1IF = 0; //clear flag for next event
+        PIR1bits.CCP1IF = 0; //clear flag for next 
+        if(indexTmr == 2u) 
+        {
+            zero();
+            millisec = 262;
+            OvrFtrigger = timerCountOvrF +4;
+        }
     } 
     if (inputSW.bit1) stateMtasks = defaultS;
-            
+      
+    if ( (indexTmr >= 2u) &&  (timerCountOvrF == OvrFtrigger))
+    {
+        showms();
+        OvrFtrigger = OvrFtrigger + 4;
+        millisec = millisec + 262;
+    }
+    
     if (indexTmr > (TIMEBUFSIZE-3u)) // the last two positions in the 
     {                                  // buffer kept for point that 
                                        // will get overwritten
@@ -403,10 +453,20 @@ void picketfence1S(void)
 
 void cycleTimesS(void)
 {
-    if (inputSW.bit1) stateMtasks = defaultS;
+    if (inputSW.bit0    ) 
+    {
+        stateMtasks = picketfence1S ;
+
+        PIR1bits.CCP1IF = 0; //clear flag for next event
+        indexTmr = 0;
+        timerCountOvrF = 0;
+        listTmr[0] = 0;
+        listTmr[1] = 0;
+        zero();
+    }
     
     // Task: Cycle Display of Times
-    if (timerCountOvrF > 28u )  // every 28th overflow 
+    if ( (timerCountOvrF > 4u) && inputSW.bit1 )  
     {
         listTmr[2] = listTmr[indexTmr];
         indexTmr++;
