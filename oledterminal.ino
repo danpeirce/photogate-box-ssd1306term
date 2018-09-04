@@ -184,11 +184,11 @@ void defaultState()
 
 }
 
-// Second level to menu added using SO (shcift out ASCII character)
+// Second level to menu added using SO (shift out ASCII character)
 // This state is entered (transition from default state) if a shift out is recevied.
-// So far this state looks for a back tick to indicate set postion command
+// So far this state looks for a back tick to indicate set position command
 // It is likely that additional controls will be added
-// if the command is not recognized then SO is cancelled and control goes back to 
+// if the command is not recognized then SO is canceled and control goes back to 
 // default state.
 void shiftoutS()
 {

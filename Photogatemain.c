@@ -69,6 +69,7 @@ void txbuffertask(void);
 void sendTime(unsigned int *listTmr);
 void running(void);
 void zero(void);
+void memory(void);    // places memory flag on screen
 void StopwatchMsg(void);
 void photogateMsg(void);
 void pendulumMsg(void);
@@ -88,7 +89,7 @@ void keepS(void);
 void stopwatchS(void);
 void gateS(void);
 void pulseS(void);
-void pulsekS(void); 
+//void pulsekS(void); 
 void pendulumS(void);
 void modesS(void);
 void picketfence1S(void);
@@ -108,9 +109,11 @@ static char code[] = { SHIFTOUT, 'w', '2', 0 };
 static char code1[] = { SHIFTOUT, 'w', '1', 0 };
 static char codeP[] = { SHIFTOUT, 'p',  0 };
 static char codeC[] = { 0x0C, 0 };
+static char codeM[] = { SHIFTOUT, '`', 16+0x20, 16+0x20, 0 }; 
 
 union flags debounceSW;
 union flags inputSW;
+union flags memflags;
 
 unsigned int listTmr[20];
 unsigned int indexTmr = 0;
@@ -154,6 +157,7 @@ void defaultS(void)
     timerCountOvrF = 0;
     listTmr[0] = 0;
     listTmr[1] = 1;
+    memflags.bit0 = 0;
     clearW2();
     StopwatchMsg();
     stateMtasks = modesS;
@@ -207,8 +211,7 @@ void modesS(void)
     {
         if (listTmr[1] == 0u) 
         {
-            if (inputSW.bit1) stateMtasks = pulsekS ;  // only photogateM1 has an alternate
-            else stateMtasks = pulseS;                 // state so far
+            stateMtasks = pulseS;   
             //PhotogateScr();
             PIR1bits.CCP1IF = 0; //clear flag for next event
             indexTmr = 0;
@@ -313,6 +316,8 @@ void gateS(void)
     }
 }
 
+/*
+ * 
 void pulsekS(void)
 {
     if (PIR1bits.CCP1IF)
@@ -344,10 +349,10 @@ void pulsekS(void)
         sendTime(listTmr);
         indexTmr = 0;
         timerCountOvrF = 0;
-        stateMtasks = keepS; // added to new mode
+        stateMtasks = modesS; // added to new mode
     }
 }
-
+*/    
 void pulseS(void)
 {
     if (PIR1bits.CCP1IF)
@@ -365,6 +370,11 @@ void pulseS(void)
         }
     } 
     if (inputSW.bit1) stateMtasks = defaultS;
+    if ((inputSW.bit0) && (!memflags.bit0) && (timerCountOvrF>2))
+    {
+        memflags.bit0 = 1;
+        memory();
+    }
     if ( (indexTmr == 2u) &&  (timerCountOvrF == OvrFtrigger))
     {
         showms();
@@ -376,6 +386,15 @@ void pulseS(void)
         sendTime(listTmr);
         indexTmr = 0;
         timerCountOvrF = 0;
+        if (memflags.bit0)
+        {
+            memflags.bit0 = 0;
+            listTmr[0] = 0;
+            listTmr[1] = 0;
+            pulseMsg();
+            stateMtasks = modesS;
+            
+        }
     }
 }
 
@@ -559,6 +578,12 @@ void sendTime(unsigned int *listTmr)
 void running(void)
 {
     inIndexBuff = inIndexBuff + sprintf( buffer+inIndexBuff, "%s- - -\n", code);
+}
+
+// indication that first value obtained will persist in display
+void memory(void)
+{
+    inIndexBuff = inIndexBuff + sprintf( buffer+inIndexBuff, "%sMemory\n", codeM);
 }
 
 void showms(void)
