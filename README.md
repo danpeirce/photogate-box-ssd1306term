@@ -13,15 +13,17 @@ mounted parts.
 
 ![](image/all_mounted_parts.jpg)
 
-This version contains two [custom 3D printed mounting brackets](https://github.com/danpeirce/pic-box-bracket) to secure the circuit boards to the box
+This version of the photogate box contains two [custom 3D printed mounting brackets](https://github.com/danpeirce/pic-box-bracket) to secure the circuit boards to the box
 lid.
 
 ## Cycle Modes
 
-When powered up the timer display is initially blank and then shows two splash screens. After the Photogate timer 
+When powered up the timer display is initially blank and then shows two splash screens in succession. The first
+is the **Adafruit Splash Screen** included with the [OLED library](https://danpeirce.github.io/2018/oled-v1.2/oled-v1.2.html#switching-to-current-adafruit-libraries-may-20-2018) that runs on the terminal
+[forked on github](https://github.com/danpeirce/Adafruit_SSD1306/tree/terminal) for this project. The second splash screen shown after the first is the
+**KPU Photogate Timer** splash screen. After the Photogate timer 
 splash screen the displays the first mode option. The fist mode option is the Stopwatch mode. One can cycle through 
 the display modes by pressing the **Mode Cycle/Reset** button. 
-
 
 1. Stopwatch
 2. Pulse
@@ -45,14 +47,17 @@ The Mode Reset button will restart the timer so that a new mode can be selected.
 
 ### Pulse mode
 
-The Photogate mode will time the duration between falling edges on the 
-photogate1 input. If new edges are detected the old time will be overwritten. Reset button
+The Pulse mode will time the duration between falling edges on the 
+photogate #1 input. If/when new edges are detected the old time will be overwritten. Reset button
 will return to mode select state **modeS**.
-   
+
+It is not always desirable to have the current time overwritten with new times when new edges are detected. if the mode select button 
+is pressed a second time **Single Run** will be displayed in window one above the selected mode. When **Single Run** is active the mode
+must be reset and the mode selected again to have new measurements made.    
 
 ### Pendulum mode
 
-The Pendulum mode is similar to Photogate mode but is displays the total period of a swinging pendulum.
+The Pendulum mode is similar to Pulse mode but it displays the total period of a swinging pendulum.
 
 ![](image/pendulum3.jpg)
 

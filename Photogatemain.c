@@ -69,7 +69,7 @@ void txbuffertask(void);
 void sendTime(unsigned int *listTmr);
 void running(void);
 void zero(void);
-void memory(void);    // places memory flag on screen
+void singlerun(void);    // places singlerun flag on screen
 void StopwatchMsg(void);
 void photogateMsg(void);
 void pendulumMsg(void);
@@ -373,7 +373,7 @@ void pulseS(void)
     if ((inputSW.bit0) && (!memflags.bit0) && (timerCountOvrF>2))
     {
         memflags.bit0 = 1;
-        memory();
+        singlerun();
     }
     if ( (indexTmr == 2u) &&  (timerCountOvrF == OvrFtrigger))
     {
@@ -581,9 +581,9 @@ void running(void)
 }
 
 // indication that first value obtained will persist in display
-void memory(void)
+void singlerun(void)
 {
-    inIndexBuff = inIndexBuff + sprintf( buffer+inIndexBuff, "%sMemory\n", codeM);
+    inIndexBuff = inIndexBuff + sprintf( buffer+inIndexBuff, "%sSingle Run\n", codeM);
 }
 
 void showms(void)
