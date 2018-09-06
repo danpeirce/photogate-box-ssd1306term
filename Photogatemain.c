@@ -85,7 +85,6 @@ void showms(void);
 
 void initialization(void);
 void defaultS(void);
-void keepS(void);
 void stopwatchS(void);
 void gateS(void);
 void pulseS(void);
@@ -163,15 +162,7 @@ void defaultS(void)
     stateMtasks = modesS;
 }
 
-void keepS(void)
-{
-    timerCountOvrF = 0;
-    listTmr[0] = 0;
-    listTmr[1] = 1;
-    //clearW2();
-    StopwatchMsg();
-    stateMtasks = modesS;
-}
+
 
 void modesS(void)
 {
@@ -299,6 +290,11 @@ void gateS(void)
         OvrFtrigger = OvrFtrigger + 4;
         millisec = millisec + 262;
     }
+    if ((inputSW.bit0) && (!memflags.bit0) && (timerCountOvrF>2))
+    {
+        memflags.bit0 = 1;
+        singlerun();
+    }
     if (inputSW.bit1) 
     {
         stateMtasks = defaultS;
@@ -312,47 +308,20 @@ void gateS(void)
         timerCountOvrF = 0;
         OpenCapture1(C1_EVERY_FALL_EDGE & CAPTURE_INT_OFF);
         PIR1bits.CCP1IF = 0; //clear flag for next event
-        //stateMtasks = keepS;
+        
+        if (memflags.bit0)
+        {
+            memflags.bit0 = 0;
+            listTmr[0] = 0;
+            listTmr[1] = 3;
+            photogateMsg();
+            stateMtasks = modesS;
+            
+        }
     }
 }
 
-/*
- * 
-void pulsekS(void)
-{
-    if (PIR1bits.CCP1IF)
-    {
-        listTmr[indexTmr] = ReadCapture1();
-        indexTmr++;
-        listTmr[indexTmr] = timerCountOvrF;
-        indexTmr++;
-        PIR1bits.CCP1IF = 0; //clear flag for next event
-        if(indexTmr == 2u) 
-        {
-            zero();
-            millisec = 262;
-            OvrFtrigger = timerCountOvrF +4;
-        }
-    } 
-    //  this mode is copied from pulseS with modifications
-    //  removed from new mode if (inputSW.bit1) stateMtasks = defaultS;
-    
-    if ( (indexTmr == 2u) &&  (timerCountOvrF == OvrFtrigger))
-    {
-        showms();
-        OvrFtrigger = OvrFtrigger + 4;
-        millisec = millisec + 262;
-    }
-    
-    if (indexTmr == 4) 
-    {    
-        sendTime(listTmr);
-        indexTmr = 0;
-        timerCountOvrF = 0;
-        stateMtasks = modesS; // added to new mode
-    }
-}
-*/    
+
 void pulseS(void)
 {
     if (PIR1bits.CCP1IF)
@@ -415,7 +384,11 @@ void pendulumS(void)
         }
     } 
     if (inputSW.bit1) stateMtasks = defaultS;
-       
+    if ((inputSW.bit0) && (!memflags.bit0) && (timerCountOvrF>2))
+    {
+        memflags.bit0 = 1;
+        singlerun();
+    }   
     if ( (indexTmr >= 2u) &&  (timerCountOvrF == OvrFtrigger))
     {
         showms();
@@ -430,6 +403,15 @@ void pendulumS(void)
         sendTime(listTmr);
         indexTmr = 0;
         timerCountOvrF = 0;
+        if (memflags.bit0)
+        {
+            memflags.bit0 = 0;
+            listTmr[0] = 0;
+            listTmr[1] = 4;
+            pendulumMsg();
+            stateMtasks = modesS;
+            
+        }
     }
 }
 

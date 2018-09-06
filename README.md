@@ -53,17 +53,31 @@ will return to mode select state **modeS**.
 
 It is not always desirable to have the current time overwritten with new times when new edges are detected. if the mode select button 
 is pressed a second time **Single Run** will be displayed in window one above the selected mode. When **Single Run** is active the mode
-must be reset and the mode selected again to have new measurements made.    
+must be selected again to have new measurements made.    
 
 ### Pendulum mode
 
-The Pendulum mode is similar to Pulse mode but it displays the total period of a swinging pendulum.
+The Pendulum mode is similar to Pulse mode but it displays the total period of a swinging pendulum. This requres three falling edges.
+
+If/when new edges are detected the old time will be overwritten. Reset button
+will return to mode select state **modeS**.
+
+It is not always desirable to have the current time overwritten with new times when new edges are detected. if the mode select button 
+is pressed a second time **Single Run** will be displayed in window one above the selected mode. When **Single Run** is active the mode
+must be selected again to have new measurements made.  
 
 ![](image/pendulum3.jpg)
 
 ### Gate mode
 
 The Gate mode times the duration from falling edge to rising edge. 
+
+If/when new edges are detected the old time will be overwritten. Reset button
+will return to mode select state **modeS**.
+
+It is not always desirable to have the current time overwritten with new times when new edges are detected. if the mode select button 
+is pressed a second time **Single Run** will be displayed in window one above the selected mode. When **Single Run** is active the mode
+must be selected again to have new measurements made. 
 
 ### Picket Fence 1
 
