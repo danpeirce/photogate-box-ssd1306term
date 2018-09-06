@@ -11,10 +11,13 @@ digraph finite_state_machine {
         op1 -> stopwatchS [ label = "Sel SW"]
         stopwatchS -> end [ label = "Reset SW" ]
         op2 -> pulseS [ label = "Sel SW" ]
+        pulseS -> op2 [ label = <Single Run<br />Done> ]
         pulseS -> end [ label = "Reset SW" ]
         op3 -> pendulumS [ label = "Sel SW" ]
+        pendulumS -> op3 [ label = <Single Run<br />Done>  ]
         pendulumS -> end [ label = "Reset SW" ]
         op4 -> gateS [ label = "Sel SW" ]
+        gateS -> op4 [ label = <Single Run<br />Done> ]
         gateS -> end [ label = "Reset SW" ]
         op5 -> picketfence1S [ label = "Sel SW" ]
         picketfence1S -> end [ label = "Reset SW" ]
@@ -35,5 +38,5 @@ digraph finite_state_machine {
 }
 
 /*
-dot -Tpng pickmode.gv -o pickmode.png
+dot -Tpng mancyclemode.gv -o image/mancyclemode.png
 */
