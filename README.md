@@ -1,17 +1,20 @@
 # Photogate Box
 
-The photogate box will contain two interconnected circuits. The display terminal circuit is shown here.
+The prototype of the photogate timer box with built in termanal. 
 
 ![](image/timerbox.jpg)
-
-![](image/terminal-front.jpg)
-
-![](image/terminal-back.jpg)
 
 The PIC18F2620 is part of the timing circuit which is mounted on the top board of this image showing all
 mounted parts.
 
 ![](image/all_mounted_parts.jpg)
+
+The photogate box contains two interconnected circuits. The display terminal circuit is shown 
+here.
+
+![](image/terminal-front.jpg)
+
+![](image/terminal-back.jpg)
 
 This version of the photogate box contains two [custom 3D printed mounting brackets](https://github.com/danpeirce/pic-box-bracket) to secure the circuit boards to the box
 lid.
