@@ -10,7 +10,10 @@ mounted parts.
 ![](image/all_mounted_parts.jpg)
 
 The photogate box contains two interconnected circuits. The display terminal circuit is shown 
-here.
+here. Text and control characters is sent from the timer circuit to the terminal circuit
+by the USART at 115200 bps. A list of control caracers recognized is given at the link:
+
+* [https://danpeirce.github.io/2018/oled-v1.2/oled-v1.2.html#command-codes-to-control-the-display-terminal](https://danpeirce.github.io/2018/oled-v1.2/oled-v1.2.html#command-codes-to-control-the-display-terminal)
 
 ![](image/terminal-front.jpg)
 
