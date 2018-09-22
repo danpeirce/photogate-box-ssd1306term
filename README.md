@@ -94,6 +94,14 @@ The select/start/stop button will allow the timer to watch for a new trigger.
 
 ## State Transition Diagram
 
+This State Transition Diagram show the explicit states and transition conditions.
+
+![](image/mancyclemode-s.png)
+
+The modeS allows the selection of mode. In the modeS state SW1 functions as a cycle state switch
+rather than a reset switch. The transition diagram is redrawn here to show the internal states 
+of the modeS.
+
 ![](image/mancyclemode.png)
 
 ## breadboard 
