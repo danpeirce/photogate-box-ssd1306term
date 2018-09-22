@@ -1,54 +1,47 @@
 digraph finite_state_machine {
         //rankdir=LR;
         overlap=false;
-        splines="true";
+        //splines="true";
         //size="8,10"
-        graph [ranksep="0.525", nodesep="0.5"];
-        //start [shape=point, xlabel=<Take points at top and<br /> bottom as same point.>];
-	    end1 [shape=point, pos = "0, 4"];
-	    end2 [shape=point, pos = "3.46, 2"];
-	    end3 [shape=point, pos = "3.46, -2"];
-	    end4 [shape=point, pos = "-3.46, -2"];
-	    end5 [shape=point, pos = "-3.46, 2"];
-         
+        //graph [ranksep="0.525", nodesep="0.5"];
+        start [shape=point, xlabel=<Take points at top and<br /> bottom as same point.>];
+	    end [shape=point, xlabel = "same point as one at top"];
+	    
+        subgraph cluster_mode {
+                 //rankdir=TB;
+                 node [shape = circle];
+                 op1 -> op2  [ label = "Cycle SW" ];
+                 op2 -> op3  [ label = "Cycle SW" ];
+                 op3 -> op4  [ label = "Cycle SW" ];
+                 op4 -> op5  [ label = "Cycle SW" ];
+                 op5 -> op1  [ label = "Cycle SW" ];
+                 label = "modeS";
+                 
+        } 
         //node [shape = circle];
-        defaultS [ pos = "0,3", shape = circle, height = "1.8"];
-        modesS [ pos = "0,0" , shape = circle, height = "2.2"];
-        stopwatchS [ pos = "2.6, 1.5" , shape = circle ];
-        pulseS [ pos = "2.6, -1.5", shape = circle, height = "1.8"];
-        pendulumS [ pos = "0, -1.5", shape = circle];
-        gateS [ pos = "-2.6, -1.5" , shape = circle, height = "1.8"];
-        picketfence1S [ pos = "-2.6, 1.5", shape = circle];
-        cycleTimesS [ shape = circle, height = "1.8"]
-        
-        defaultS -> modesS;
-        modesS -> stopwatchS [ label = "Sel SW"];
-        
-        //[ xlabel = <modeS cycle options in display<br />using cycle SW<br />Select option with Mode Select Switch> ]
+        start -> defaultS
+        defaultS -> op1 [xlabel = <modeS cycle options in display<br />using cycle SW<br />Select option with Mode Select Switch> ];
         
         
-        stopwatchS -> end1 [ label = <Reset SW> ]
-        end1 -> defaultS;
-        modesS -> pulseS [ label = <Sel SW> ]
-        pulseS -> modesS [ label = <Single Run<br />Done> ]
-        pulseS -> end2 [ label = <Reset SW> ]
-        modesS -> pendulumS [ label = <Sel<br />SW> ]
-        pendulumS -> modesS [ label = <Single<br />Run<br />Done>  ]
-        pendulumS -> end3 [ label = "Reset SW" ]
-        modesS -> gateS [ label = <Sel<br /> SW> ]
-        gateS -> modesS [ label = <Single <br />Run<br />Done> ]
-        gateS -> end4 [ label = "Reset SW" ]
-        modesS -> picketfence1S [ label = "Sel SW" ]
-        picketfence1S -> defaultS [ label = "Reset SW" ]
-        picketfence1S -> cycleTimesS [ label = <All <br />Edges <br /> Detected> ]
-        cycleTimesS -> picketfence1S [ label = <Sel<br />SW> ]
-        //end5 -> end1;
-        end2 -> end1;
-        end4 -> end3;
-        end3 -> end2;
+        op1 -> stopwatchS [ label = "Sel SW"]
+        stopwatchS -> end [ label = "Reset SW" ]
+        op2 -> pulseS [ label = "Sel SW" ]
+        pulseS -> op2 [ label = <Single Run<br />Done> ]
+        pulseS -> end [ label = "Reset SW" ]
+        op3 -> pendulumS [ label = "Sel SW" ]
+        pendulumS -> op3 [ label = <Single Run<br />Done>  ]
+        pendulumS -> end [ label = "Reset SW" ]
+        op4 -> gateS [ label = "Sel SW" ]
+        gateS -> op4 [ label = <Single Run<br />Done> ]
+        gateS -> end [ label = "Reset SW" ]
+        op5 -> picketfence1S [ label = "Sel SW" ]
+        picketfence1S -> end [ label = "Reset SW" ]
+        picketfence1S -> cycleTimesS [ label = "All Edges Detected" ]
+        cycleTimesS -> picketfence1S [ label = "Sel SW" ]
+        
         
 }
 
 /*
-fdp -Tpng mancyclemode.gv -o image/mancyclemode.png
+dot -Tpng mancyclemode.gv -o image/mancyclemode.png
 */
