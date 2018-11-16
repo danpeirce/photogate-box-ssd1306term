@@ -338,8 +338,8 @@ void pulseS(void)
             OvrFtrigger = timerCountOvrF +4;
         }
     } 
-    if (inputSW.bit1) stateMtasks = defaultS;
-    if ((inputSW.bit0) && (!memflags.bit0) && (timerCountOvrF>2))
+    if (inputSW.bit1) stateMtasks = defaultS;                      // reset
+    if ((inputSW.bit0) && (!memflags.bit0) && (timerCountOvrF>2))  // set to single run
     {
         memflags.bit0 = 1;
         singlerun();
