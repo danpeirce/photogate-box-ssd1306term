@@ -88,6 +88,9 @@ void defaultS(void);
 void stopwatchS(void);
 void gateS(void);
 void pulseS(void);
+void laserg1S(void);
+void laserg2S(void);
+void waitrS(void);
 //void pulsekS(void); 
 void pendulumS(void);
 void modesS(void);
@@ -154,12 +157,20 @@ void main(void)
 void defaultS(void)
 {
     timerCountOvrF = 0;
-    listTmr[0] = 0;
-    listTmr[1] = 1;
+ //   listTmr[0] = 0;
+ //   listTmr[1] = 1;
     memflags.bit0 = 0;
-    clearW2();
-    StopwatchMsg();
-    stateMtasks = modesS;
+//    clearW2();
+//    StopwatchMsg();
+    stateMtasks = laserg1S;
+    // in old project these would have been set when transferring from 
+    //   modeS to pulseS. the old pulseS was the template for laserg1S
+    PIR1bits.CCP1IF = 0; //clear flag for next event
+    indexTmr = 0;
+    timerCountOvrF = 0;
+    listTmr[0] = 0;
+    listTmr[1] = 0;
+    zero();         //display 0 time lapsed
 }
 
 
@@ -321,6 +332,88 @@ void gateS(void)
     }
 }
 
+
+void laserg1S(void)
+{
+    if (PIR1bits.CCP1IF)
+    {
+        listTmr[indexTmr] = ReadCapture1();
+        indexTmr++;
+        listTmr[indexTmr] = timerCountOvrF;
+        indexTmr++;
+    //    PIR1bits.CCP1IF = 0; //clear flag for next event
+        PIR2bits.CCP2IF = 0; //clear ccp2 flag for next event
+         
+        zero();
+        millisec = 262;
+        OvrFtrigger = timerCountOvrF +4;
+        stateMtasks = laserg2S;
+    } 
+    // if (inputSW.bit1) stateMtasks = defaultS;                      // re-arm
+    /* not needed
+    if ((inputSW.bit0) && (!memflags.bit0) && (timerCountOvrF>2))  // set to single run
+    {
+        memflags.bit0 = 1;
+        singlerun();
+    }    
+    if ( (indexTmr == 2u) &&  (timerCountOvrF == OvrFtrigger))
+    {
+        showms();
+        OvrFtrigger = OvrFtrigger + 4;
+        millisec = millisec + 262;
+    }        
+    if (indexTmr == 4) 
+    {    
+        sendTime(listTmr);
+        indexTmr = 0;
+        timerCountOvrF = 0;
+        if (memflags.bit0)
+        {
+            memflags.bit0 = 0;
+            listTmr[0] = 0;
+            listTmr[1] = 0;
+            pulseMsg();
+            stateMtasks = modesS;
+            
+        }
+    } */
+}
+
+void laserg2S(void)
+{
+    if (PIR2bits.CCP2IF)
+    {
+        listTmr[indexTmr] = ReadCapture1();
+        indexTmr++;
+        listTmr[indexTmr] = timerCountOvrF;
+        indexTmr++;
+    //    PIR1bits.CCP1IF = 0; //clear flag for next event
+    //    PIR1bits.CCP2IF = 0; //clear ccp2 flag for next event
+
+    } 
+    if (inputSW.bit1) stateMtasks = defaultS;                      // reset
+
+   
+    if ( (indexTmr == 2u) &&  (timerCountOvrF == OvrFtrigger))
+    {
+        showms();
+        OvrFtrigger = OvrFtrigger + 4;
+        millisec = millisec + 262;
+    }        
+    if (indexTmr == 4) 
+    {    
+        sendTime(listTmr);
+        indexTmr = 0;
+        timerCountOvrF = 0;
+        stateMtasks = waitrS;
+    } 
+}
+
+void waitrS(void)
+{
+    if (inputSW.bit1) stateMtasks = defaultS;    // reset
+    clearW2();
+}
 
 void pulseS(void)
 {
@@ -658,11 +751,14 @@ void initialization(void)
           // SPBRG = 1, baud rate is 1 000 000, 
           // SPBRG = 16, baud rate is 115 200 (good for hyperterminal debugging)
 
-    OpenTimer1(TIMER_INT_OFF & T1_16BIT_RW & T1_SOURCE_INT & T1_PS_1_8 & T1_CCP1_T3_CCP2);
+ //   OpenTimer1(TIMER_INT_OFF & T1_16BIT_RW & T1_SOURCE_INT & T1_PS_1_8 & T1_CCP1_T3_CCP2); 
+    OpenTimer1(TIMER_INT_OFF & T1_16BIT_RW & T1_SOURCE_INT & T1_PS_1_8 & T1_SOURCE_CCP);
     WriteTimer1(0);  // thinking of having having timers running always
     PIR1bits.TMR1IF = 0;
     OpenCapture1(C1_EVERY_FALL_EDGE & CAPTURE_INT_OFF); 
-    {
+    OpenCapture2(C2_EVERY_FALL_EDGE & CAPTURE_INT_OFF);
+    
+    {  // long delay to allow Adafruit splash screen and OLED initialization on power up
         int i = 0; 
         for (i=0; i< 35 ;i++) Delay10KTCYx(200);
     }
