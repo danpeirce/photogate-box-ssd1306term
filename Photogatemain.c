@@ -344,39 +344,13 @@ void laserg1S(void)
     //    PIR1bits.CCP1IF = 0; //clear flag for next event
         PIR2bits.CCP2IF = 0; //clear ccp2 flag for next event
          
-        zero();
+    //    zero();        // don't need this
         millisec = 262;
         OvrFtrigger = timerCountOvrF +4;
         stateMtasks = laserg2S;
     } 
     // if (inputSW.bit1) stateMtasks = defaultS;                      // re-arm
-    /* not needed
-    if ((inputSW.bit0) && (!memflags.bit0) && (timerCountOvrF>2))  // set to single run
-    {
-        memflags.bit0 = 1;
-        singlerun();
-    }    
-    if ( (indexTmr == 2u) &&  (timerCountOvrF == OvrFtrigger))
-    {
-        showms();
-        OvrFtrigger = OvrFtrigger + 4;
-        millisec = millisec + 262;
-    }        
-    if (indexTmr == 4) 
-    {    
-        sendTime(listTmr);
-        indexTmr = 0;
-        timerCountOvrF = 0;
-        if (memflags.bit0)
-        {
-            memflags.bit0 = 0;
-            listTmr[0] = 0;
-            listTmr[1] = 0;
-            pulseMsg();
-            stateMtasks = modesS;
-            
-        }
-    } */
+
 }
 
 void laserg2S(void)
