@@ -386,7 +386,7 @@ void laserg2S(void)
 void waitrS(void)
 {
     if (inputSW.bit1) stateMtasks = defaultS;    // reset
-    clearW2();
+    // clearW2();  // this line caused continual writing to display
 }
 
 void pulseS(void)
