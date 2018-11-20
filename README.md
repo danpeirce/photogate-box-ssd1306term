@@ -22,103 +22,24 @@ by the USART at 115200 bps. A list of control characters recognized is given at 
 This version of the photogate box contains two [custom 3D printed mounting brackets](https://github.com/danpeirce/pic-box-bracket) to secure the circuit boards to the box
 lid.
 
-## Cycle Modes
+## Only one Mode
+
+Unlike the main branch of this project the lasergate branch has only one mode. It is lasergate.
 
 When powered up the timer display is initially blank and then shows two splash screens in succession. The first
 is the **Adafruit Splash Screen** included with the [OLED library](https://danpeirce.github.io/2018/oled-v1.2/oled-v1.2.html#switching-to-current-adafruit-libraries-may-20-2018) that runs on the terminal
 [forked on github](https://github.com/danpeirce/Adafruit_SSD1306/tree/terminal) for this project. The second splash screen shown after the first is the
 **KPU Photogate Timer** splash screen. After the Photogate timer 
-splash screen the displays the first mode option. The fist mode option is the Stopwatch mode. One can cycle through 
-the display modes by pressing the **Mode Cycle/Reset** button. 
+splash screen the displays the first 0 ms is added to the bottom portion of the display. Once 0 ms is showing in the display the unit
+is ready for a timing event on the photogate #1 input. Once the start laser beam is interrupted the display with show an incrementing time approximation.
+When the stop laser beam is interupted (photogate #2 input) the approximate running time is replaced with time read from the internal hardware timer.
+At this point the system will ignore laser inputs until the reset button is pressed.
 
-1. Stopwatch
-2. Pulse
-3. Pendulum
-4. Gate
-5. Picket Fence 1
+### State Tranition Diagram
 
-When the timer box is powered up window 1 of the display will cycle displaying possible mode selections in a 
-repeating sequence. The **Mode Cycle/Reset** button will advance the displayed mode. The **mode select** 
-button allows one to select the mode.  
+![](image/lasergate.svg)
 
-### Stopwatch mode
 
-When the Stopwatch mode is selected the **mode select** button becomes the Start/Stop button.
-During timing window 2 of the display shows a running approximation of elapsed time..
-When timing is stopped the actual elapsed time will be displayed in window 2. Time is reset automatically if/when 
-the Start/Stop button is pressed again.
-The Mode Reset button will restart the timer so that a new mode can be selected.
-
-![](image/stopwatch1.jpg)
-
-### Pulse mode
-
-The Pulse mode will time the duration between falling edges on the 
-photogate #1 input. If/when new edges are detected the old time will be overwritten. Reset button
-will return to mode select state **modeS**.
-
-It is not always desirable to have the current time overwritten with new times when new edges are detected. if the mode select button 
-is pressed a second time **Single Run** will be displayed in window one above the selected mode. When **Single Run** is active the mode
-must be selected again to have new measurements made.    
-
-### Pendulum mode
-
-The Pendulum mode is similar to Pulse mode but it displays the total period of a swinging pendulum. This requres three falling edges.
-
-If/when new edges are detected the old time will be overwritten. Reset button
-will return to mode select state **modeS**.
-
-It is not always desirable to have the current time overwritten with new times when new edges are detected. if the mode select button 
-is pressed a second time **Single Run** will be displayed in window one above the selected mode. When **Single Run** is active the mode
-must be selected again to have new measurements made.  
-
-![](image/pendulum3.jpg)
-
-### Gate mode
-
-The Gate mode times the duration from falling edge to rising edge. 
-
-If/when new edges are detected the old time will be overwritten. Reset button
-will return to mode select state **modeS**.
-
-It is not always desirable to have the current time overwritten with new times when new edges are detected. if the mode select button 
-is pressed a second time **Single Run** will be displayed in window one above the selected mode. When **Single Run** is active the mode
-must be selected again to have new measurements made. 
-
-### Picket Fence 1
-
-This mode measures the duration between the first falling edge (the trigger point) and each of eight subsequent 
-falling edges. Once triggered the display shows approximate running time until eight edges have been captured. 
-Once the times have been captured one can cycle through the times with the mode cycle button. 
-The select/start/stop button will allow the timer to watch for a new trigger.
-
-## State Transition Diagram
-
-This State Transition Diagram show the explicit states and transition conditions.
-
-![](image/mancyclemode-s.svg)
-
-The modeS allows the selection of mode. In the modeS state SW1 functions as a cycle state switch
-rather than a reset switch. The transition diagram is redrawn here to show the internal states 
-of the modeS.
-
-![](image/mancyclemode.svg)
-
-## breadboard 
-
-Initial assembly was done on a breadboard.
-
-![](image/pickmode2620cct.jpg)
-
-Notes specific for this branch are at:
-
-* [https://danpeirce.github.io/2018/oled-v1.2/oled-v1.2.html#pickmode2620](https://danpeirce.github.io/2018/oled-v1.2/oled-v1.2.html#pickmode2620)
-
-The Photogate box includes a microcontroller with built-in hardware timers.
-
-This branch is for the PIC18F2620 MCU. This branch uses an external 32 Mhz oscillator.
-
-![](image/timeswitchcct.jpg)
 
 ## Previous Project
 

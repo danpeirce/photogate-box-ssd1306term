@@ -1,0 +1,22 @@
+digraph finite_state_machine {
+        //rankdir=LR;
+        overlap=false;
+        //splines="true";
+        //size="8,10"
+        //graph [ranksep="0.525", nodesep="0.5"];
+        //start [shape=point, xlabel=<Take points at top and<br /> bottom as same point.>];
+	    //end [shape=point, xlabel = "same point as one at top"];
+	    
+        
+        //node [shape = circle];
+        //start -> defaultS
+        defaultS -> laserg1S;
+		laserg1S -> laserg2S [ label = "Start Pulse at gate one" ];
+        laserg2S -> waitrS [ label = "Stop Pulse at gate two" ];
+		laserg2S -> defaultS [ label = "Reset Detected" ]; 
+        waitrS -> defaultS [ label = "Reset Detected" ];        
+}
+
+/*
+dot -Tsvg lasergate.gv -o image/lasergate.svg
+*/
