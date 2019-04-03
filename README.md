@@ -19,7 +19,7 @@ The side by side images are of the PIC timer circuit photo and the PIC pin assig
 
 ### Switch wiring and Power wires
 
-![](switch-wiring.jpg)  ![](image/power-ground.jpg)
+![](image/switch-wiring.jpg)  ![](image/power-ground.jpg)
 
 ## The Display Terminal Circuit
 
