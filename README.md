@@ -9,7 +9,17 @@ mounted parts.
 
 ![](image/all_mounted_parts.jpg)
 
-The photogate box contains two interconnected circuits. The display terminal circuit is shown 
+The photogate box contains two interconnected circuits. The display terminal circuit and the PIC timer circuit.
+
+## The PIC Timer Circuit
+
+The side by side images are of the PIC timer circuit photo and the PIC pin assignments.
+
+![](image/img-PIC-board.jpg)  ![](image/PIC-pins.png)
+
+## The Display Terminal Circuit
+
+The display terminal circuit is shown 
 here. Text and control characters is sent from the timer circuit to the terminal circuit
 by the USART at 115200 bps. A list of control characters recognized is given at the link:
 
