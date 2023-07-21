@@ -1,3 +1,11 @@
+# Photogate Box Xpress 
+
+Planning to port this project to a different MCU and use a different display. This moves are intended to bring the project forward with new parts and 
+make simplify construction. The old project was built using the now oblolete peripheral libraries. The OLED display was small. We are generally now using an
+I2C alphenumeric display in a 16x2 format rather than a graphical display that never caught on here.
+
+The changes will be extensive so I will use a new repository I think. I will start with the working files from this repository.
+
 # Photogate Box
 
 The prototype of the photogate timer box with built in termanal. 
