@@ -1,6 +1,6 @@
 # Photogate Box
 
-The prototype of the photogate timer box with built in termanal. 
+The prototype of the photogate timer box with built in terminal. 
 
 ![](image/timerbox.jpg)
 
@@ -32,10 +32,10 @@ is the **Adafruit Splash Screen** included with the [OLED library](https://danpe
 **KPU Photogate Timer** splash screen. After the Photogate timer 
 splash screen the displays the first 0 ms is added to the bottom portion of the display. Once 0 ms is showing in the display the unit
 is ready for a timing event on the photogate #1 input. Once the start laser beam is interrupted the display with show an incrementing time approximation.
-When the stop laser beam is interupted (photogate #2 input) the approximate running time is replaced with time read from the internal hardware timer.
+When the stop laser beam is interrupted (photogate #2 input) the approximate running time is replaced with time read from the internal hardware timer.
 At this point the system will ignore laser inputs until the reset button is pressed.
 
-### State Tranition Diagram
+### State Transition Diagram
 
 ![](image/lasergate.svg)
 
@@ -68,3 +68,18 @@ The PIC inputs and outputs as defined in the source code.
   Peripheral Library.**
   
 * Also add the path to the location of the peripheral libraries.
+
+### Added existing HEX file to project Files
+
+Since this code has been working fine and was compiled years ago with an old compiler version (v1.33) and legacy peripheral 
+libraries that we stooped using a number of years ago I have use a PICkit3 to read the memory of the existing unit and saved 
+it as a hex file. If the lasergate timeer box should be damaged or go missing a new one could be constructed and programmed
+with this hex file.
+
+* [hex/lasergate.hex](hex/lasergate.hex)
+
+There is a six pin programming header on the PIC board in the lasergate box available for programming. In 2023 the MPlab IPE 
+still works with a PICkit3.
+
+![](image/programming_timerbox.jpg)
+

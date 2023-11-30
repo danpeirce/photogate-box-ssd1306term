@@ -5,7 +5,6 @@ funclist
 *.as
 *.cmf
 *.cof
-*.hex
 *.hxl
 *.lst
 *.map
