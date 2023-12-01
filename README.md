@@ -1,6 +1,6 @@
 # Photogate Box
 
-The prototype of the photogate timer box with built in termanal. 
+The prototype of the photogate timer box with built in terminal. 
 
 ![](image/timerbox.jpg)
 
@@ -79,7 +79,7 @@ must be selected again to have new measurements made.
 
 ### Pendulum mode
 
-The Pendulum mode is similar to Pulse mode but it displays the total period of a swinging pendulum. This requres three falling edges.
+The Pendulum mode is similar to Pulse mode but it displays the total period of a swinging pendulum. This requires three falling edges.
 
 If/when new edges are detected the old time will be overwritten. Reset button
 will return to mode select state **modeS**.
@@ -163,3 +163,18 @@ The PIC inputs and outputs as defined in the source code.
   Peripheral Library.**
   
 * Also add the path to the location of the peripheral libraries.
+
+### Added existing HEX file to project Files
+
+Since this code has been working fine and was compiled years ago with an old compiler version (v1.33) and legacy peripheral 
+libraries that we stooped using a number of years ago I have use a PICkit3 to read the memory of the existing unit and saved 
+it as a hex file. If the lasergate timer box should be damaged or go missing a new one could be constructed and programmed
+with this hex file.
+
+* [hex/timer_m_SSD1306.hex](hex/timer_m_SSD1306.hex)
+
+There is a six pin programming header on the PIC board in the lasergate box available for programming. In 2023 the MPlab IPE 
+still works with a PICkit3.
+
+![](image/programming_timerbox.jpg)
+
